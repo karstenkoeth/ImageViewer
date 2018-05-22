@@ -9,9 +9,10 @@
   // 2018-04-26 0.01 kdk First version with version information
   // 2018-05-22 0.10 kdk Some versions made without version information. Now
   //                     with license text and version information
+  // 2018-05-22 0.11 kdk Cleaning up the code.
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.10";
+  var PROG_VERSION = "0.11";
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -83,64 +84,57 @@
 
     <div class="IVnav">
       <section>
-        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImagePos1()">
+        <div style="width:20%;height:20px;cursor:pointer"
+             onmouseover="wsImagePos1()" onclick="wsImagePos1()">
           &#8676;
         </div>
-        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImagePrev()">
+        <div style="width:20%;height:20px;cursor:pointer"
+             onmouseover="wsImagePrev()" onclick="wsImagePrev()">
           &#8592;
         </div>
-        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImageGoto()" id="IVListPos">
+        <div style="width:20%;height:20px;cursor:pointer"
+             onmouseover="wsImageGoto()" onclick="wsImageGoto()"
+             id="IVListPos">
           =
         </div>
-        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImageNext()">
+        <div style="width:20%;height:20px;cursor:pointer"
+             onmouseover="wsImageNext()" onclick="wsImageNext()">
           &#8594;
         </div>
-        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImageLast()">
+        <div style="width:20%;height:20px;cursor:pointer"
+             onmouseover="wsImageLast()" onclick="wsImageLast()">
           &#8677;
         </div>
       </section>
     </div>
 
+    <!-- ################################################################### -->
 
     <div style="margin:8px;">
 
-      <p>
-        Jetzt kommt das alte Zeugs.
-      </p>
+      <h1>
+        Programmer's Point
+      </h1>
 
       <!-- For WebSocket test: -->
       <pre id="wslogoutput"></pre>
 
-      <button id="openFile" onclick="openfile();">Open</button>
-      <button id="openDir"  onclick="IVOpenDir();">IV Scan Folders</button>
-
-      <p id="ElectronInfo">
-      kdk We are using node <script>//document.write(process.versions.node)</script>,
-      Chrome <script>//document.write(process.versions.chrome)</script>,
-      and Electron <script>//document.write(process.versions.electron)</script>.
-      </p>
-
-      <p>
-        <div    id="IVlabel" >Folder for Thumbnails</div>
-        <div    id="IVTextFolderThumbnails"> bla /Users/koeth/Pictures/ImageViewer/Thumbnails/</div>
-        <button id="IVbutton"  onclick="IVSetFolderThumbnails();">Change Folder</button>
-      </p>
-
-      <p id="debugoutput">
-        No Output.
+      <p id="debugoutputpar">
+        Copyright 2018 Karsten Köth -
+        <a href="https://opensource.org/licenses/MIT">MIT License</a> -
+        <a href="https://github.com/karstenkoeth/ImageViewer">Source</a> -
       </p>
 
     </div>
+
+    <!-- ################################################################### -->
 
   </body>
   <script src="actions.js"></script>
   <script src="websockets.js"></script>
   <script>
-    var s = document.getElementById("debugoutput");
-    s.innerHTML = "Written with my Script 2017-04-20\n"
+    var s = document.getElementById("debugoutputpar");
+    s.innerHTML = s.innerHTML + PROG_NAME + " " + PROG_VERSION;
 
-    // You can also require other files to run in this process (if you are in electron!)
-    // require('./renderer.js')
   </script>
-  <!-- script src="./renderer.js"  --><!-- /script -->
 </html>

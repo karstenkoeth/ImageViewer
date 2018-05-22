@@ -14,6 +14,7 @@
 // 2018-05-13 0.05 With Comments
 // 2018-05-15 0.06 With more Comments
 // 2018-05-22 0.10 With license text
+// 2018-05-22 0.11 With automated server ip address
 
 // ///////////////////////////////////////////////////////////////////////////
 //
@@ -126,14 +127,19 @@
 
   // ///////////////////////////////
   // Setup websocket with callbacks
-  let wsURL = 'ws://localhost:8080/';
+  let serveripaddress = location.hostname;
+  // Static variant:
+  //let wsURL = 'ws://localhost:8080/';
+  let wsURL = 'ws://'+serveripaddress+':8080/';
   // For Testing:
   //var wsURL = 'ws://echo.websocket.org';
 
+  wsLog('CONNECTING ' + wsURL + ' ...')
   let ws = new WebSocket(wsURL);
 
   ws.onopen = function() {
-    wsLog('CONNECT');
+    wsLog('CONNECTED');
+    wsImageVers();
   };
 
   ws.onclose = function() {

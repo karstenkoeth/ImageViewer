@@ -1,5 +1,9 @@
-/* Versions ***************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/* Versions                                                                   */
+/*                                                                            */
 /* 2018-05-22 0.10 kdk First version with Version information + license text  */
+/* 2018-05-22 0.11 kdk With debugoutputpar                                    */
 
 /*
 #
@@ -42,6 +46,7 @@ section {
 }
 
 p         { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 12px; }
+h1        { font-family: sans-serif; font-weight:bold;                                                  }
 #Uhr      { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 100px; }
 #debugoutput { font-family: monospace; font-size: 10px; }
 
@@ -133,4 +138,8 @@ p         { font-family: sans-serif; font-weight:bold; width: 100%; text-align:c
   cursor: pointer;
   width: 120px;
   background: linear-gradient(180deg, #fff 0%, #fff 0%, #e6e6e6 100%, #e6e6e6 100%);
+}
+
+#debugoutputpar {
+  font-size: 10px;
 }

@@ -26,6 +26,15 @@
 
 # #########################################
 #
+#
+# Make'n'run
+#
+# COMMAND: ifconfig | grep "inet " | grep "broadcast" | cut -f 2 -d " "
+# OUTPUT:  10.0.1.12 (2018-05-22)
+# RUN: websocketd --port=8080 ./image_viewer_server.sh
+
+# #########################################
+#
 # Constants
 #
 
@@ -100,5 +109,10 @@ chmod u+x "$SERVER/exif2html.sh"
 # #########################################
 
 echo "Done."
+echo ""
+echo "Run with: websocketd --port=8080 ./image_viewer_server.sh"
+echo ""
+MYMASCHINE=$(ifconfig | grep "inet " | grep "broadcast" | cut -f 2 -d " ")
+echo "You will run on $MYMASCHINE"
 
 # #########################################
