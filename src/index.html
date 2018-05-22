@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+  <script>
+  // ///////////////////////////////////////////////////////////////////////////
+  //
+  // Versions
+  //
+  // 2018-04-26 0.01 kdk First version with version information
+  // 2018-05-22 0.10 kdk Some versions made without version information. Now
+  //                     with license text and version information
+
+  var PROG_NAME = "ImageViewer";
+  var PROG_VERSION = "0.10";
+
+  // ///////////////////////////////////////////////////////////////////////////
+  //
+  // MIT license (MIT)
+  //
+  // Copyright 2018 Karsten Köth
+  //
+  // Permission is hereby granted, free of charge, to any person obtaining a copy
+  // of this software and associated documentation files (the "Software"), to deal
+  // in the Software without restriction, including without limitation the rights
+  // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  // copies of the Software, and to permit persons to whom the Software is
+  // furnished to do so, subject to the following conditions:
+  //
+  // The above copyright notice and this permission notice shall be included in
+  // all copies or substantial portions of the Software.
+  //
+  // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  // THE SOFTWARE.
+
+  </script>
+
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="global.css">
+    <title>ImageViewer</title>
+  </head>
+
+  <body style="margin:0px">
+    <div class="IVheader">
+      <section>
+        <div style="width:20%;height:20px;cursor:pointer" onclick="window.open('settings.html','Settings',
+              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')">
+          Settings
+        </div>
+        <div style="width:20%;height:20px;">
+          Scan
+        </div>
+        <div style="width:20%;height:20px;">
+          Category: xxx
+        </div>
+        <div style="width:20%;height:20px;">
+          Slideshow
+        </div>
+        <div style="width:20%;height:20px;">
+          Export
+        </div>
+      </section>
+    </div>
+
+    <div class="IVbody">
+      <div id="IVpool">
+        <div style="width:30%" id="IVimage" onmouseover="IVShowAlbums(this)" onmouseout="IVUnShowAlbums(this)">
+          <img src="./img/schnee.png"/>
+        </div>
+        <div style="width:30%" id="IVimage" >
+          <img id="IVImageMid" src="./img/default.png"/>
+        </div>
+        <div style="width:30%" id="IVimage" onmouseover="wsImageVers()">
+          <img src="./img/wolken.png"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="IVnav">
+      <section>
+        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImagePos1()">
+          &#8676;
+        </div>
+        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImagePrev()">
+          &#8592;
+        </div>
+        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImageGoto()" id="IVListPos">
+          =
+        </div>
+        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImageNext()">
+          &#8594;
+        </div>
+        <div style="width:20%;height:20px;cursor:pointer" onmouseover="wsImageLast()">
+          &#8677;
+        </div>
+      </section>
+    </div>
+
+
+    <div style="margin:8px;">
+
+      <p>
+        Jetzt kommt das alte Zeugs.
+      </p>
+
+      <!-- For WebSocket test: -->
+      <pre id="wslogoutput"></pre>
+
+      <button id="openFile" onclick="openfile();">Open</button>
+      <button id="openDir"  onclick="IVOpenDir();">IV Scan Folders</button>
+
+      <p id="ElectronInfo">
+      kdk We are using node <script>//document.write(process.versions.node)</script>,
+      Chrome <script>//document.write(process.versions.chrome)</script>,
+      and Electron <script>//document.write(process.versions.electron)</script>.
+      </p>
+
+      <p>
+        <div    id="IVlabel" >Folder for Thumbnails</div>
+        <div    id="IVTextFolderThumbnails"> bla /Users/koeth/Pictures/ImageViewer/Thumbnails/</div>
+        <button id="IVbutton"  onclick="IVSetFolderThumbnails();">Change Folder</button>
+      </p>
+
+      <p id="debugoutput">
+        No Output.
+      </p>
+
+    </div>
+
+  </body>
+  <script src="actions.js"></script>
+  <script src="websockets.js"></script>
+  <script>
+    var s = document.getElementById("debugoutput");
+    s.innerHTML = "Written with my Script 2017-04-20\n"
+
+    // You can also require other files to run in this process (if you are in electron!)
+    // require('./renderer.js')
+  </script>
+  <!-- script src="./renderer.js"  --><!-- /script -->
+</html>

@@ -1,0 +1,136 @@
+/* Versions ***************************************************************** */
+/* 2018-05-22 0.10 kdk First version with Version information + license text  */
+
+/*
+#
+# MIT license (MIT)
+#
+# Copyright 2018 Karsten Köth
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+*/
+
+/* Farbschemata: ************************************************************ */
+
+.primarycolor{      background-color:rgb(137, 196, 244)}
+.darkprimarycolor{  background-color:rgb(65, 94, 116)}
+.lightprimarycolor{ background-color:rgb(212, 231, 246)}
+.accentcolor{       background-color:rgb(108, 155, 193)}
+
+/* Flex Box Preparation ***************************************************** */
+
+section {
+  display:flex;
+  flex-direction: row;
+}
+
+p         { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 12px; }
+#Uhr      { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 100px; }
+#debugoutput { font-family: monospace; font-size: 10px; }
+
+#IVlabel {
+  font-family: 'Open Sans', sans-serif;
+  font-weight:bold;
+  width: 100%;
+  text-align:left;
+  font-size: 14px;
+}
+
+#IVtext {
+  font-family: 'Open Sans', sans-serif;
+  font-weight:normal;
+  width: 100%;
+  text-align:left;
+  font-size: 14px;
+}
+
+#IVpool {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+#IVimage {
+  width: 320px;
+  height: 320px;
+  padding: 20px;
+  text-align: center;
+}
+
+.IVheader {
+  background-color: rgb(137, 196, 244);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin:0px;
+  padding: 10px;
+  font-family: sans-serif;
+  font-weight:bold;
+  width: 100%;
+  text-align:center;
+  font-size: 16px;
+}
+
+.IVbody {
+  margin:10px;
+}
+
+.IVnav {
+  background-color: rgb(137, 196, 244);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin:0px;
+  padding: 10px;
+  font-family: sans-serif;
+  font-weight:bold;
+  width: 100%;
+  text-align:center;
+  font-size: 16px;
+}
+
+.IVcode {
+  font-family: 'Lucida Console', monospace;
+  font-weight:normal;
+  width: 100%;
+  text-align:left;
+  font-size: 12px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+}
+
+.IVinputnumber {
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.IVdelimiter {
+  margin-bottom: 4px;
+  margin-top: 14px;
+}
+
+#IVbutton {
+  border-radius: 0px;
+  border-width: 1px;
+  border-color: #000000;
+  border-style: solid;
+  cursor: pointer;
+  width: 120px;
+  background: linear-gradient(180deg, #fff 0%, #fff 0%, #e6e6e6 100%, #e6e6e6 100%);
+}
