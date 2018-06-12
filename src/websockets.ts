@@ -15,6 +15,7 @@
 // 2018-05-15 0.06 With more Comments
 // 2018-05-22 0.10 With license text
 // 2018-05-22 0.11 With automated server ip address
+// 2018-06-12 0.12 With Album Name Parsing
 
 // ///////////////////////////////////////////////////////////////////////////
 //
@@ -70,6 +71,25 @@
   // TODO: ALBS --> List all shortcuts into an array. Ask for every shortcut
   //                the albumname with ALBU=Shortcut.
 
+  function AlbumSplit(content)
+  {
+    var slen=content.length;
+    var stmp='';
+    var pos=0;
+    while ( pos<slen )
+    {
+      stmp=content.charAt(pos);
+      if (stmp!=";")
+      {
+        // It Works
+        // wsLog('Album Shortcut '+stmp);
+        // Get AlbumName:
+        ws.send('ALBU='+stmp)
+      }
+      pos++;
+    }
+  }
+
   // TODO: On an image, press a shortcut (if this is element from albumShortcuts):
   //   If shortcut not exists: Open dialog "create new albumname".
   //   Check, if image is part from album.
@@ -85,6 +105,7 @@
     ws.send('POS1');
     ws.send('FILE');
     ws.send('GIVE');
+    ws.send('FALB');
     wsLog('POS1');
   }
 
@@ -93,6 +114,7 @@
     ws.send('PREV');
     ws.send('FILE');
     ws.send('GIVE');
+    ws.send('FALB');
     wsLog('PREV');
   }
 
@@ -101,6 +123,7 @@
     ws.send('GOTO=358');
     ws.send('FILE');
     ws.send('GIVE');
+    ws.send('FALB');
     wsLog('GOTO');
   }
 
@@ -109,6 +132,7 @@
     ws.send('NEXT');
     ws.send('FILE');
     ws.send('GIVE');
+    ws.send('FALB');
     wsLog('NEXT');
   }
 
@@ -117,6 +141,7 @@
     ws.send('LAST');
     ws.send('FILE');
     ws.send('GIVE');
+    ws.send('FALB');
     wsLog('LAST');
   }
 
@@ -159,7 +184,6 @@
     {
       // FILE - image file name
       let img = document.getElementById('IVImageMid');
-      //img.setAttribute('src', './Thumbnails/' + msg.data);
       img.setAttribute('src', './Thumbnails/' + content);
     }
     if ( command == 'GIVE')
@@ -170,7 +194,14 @@
     if ( command == 'FALB')
     {
       // FALB - the album shortcuts the given UUID is in.
-      // TODO: Parsen und irgendwie anzeigen Und zwar die Albumnamen anzeigen, nicht die Shortcuts.
+      // "content" contains something like "F;G;"
+      AlbumSplit(content);
+    }
+    if ( command == 'ALBU')
+    {
+      // ALBU - Print the Album Name to a given Album Shortcut
+      // TODO: Irgendwie anzeigen. Und zwar die Albumnamen anzeigen, nicht die Shortcuts.
+      wsLog('AlbumName: '+content);
     }
   };
 

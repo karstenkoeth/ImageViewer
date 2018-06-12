@@ -10,9 +10,10 @@
   // 2018-05-22 0.10 kdk Some versions made without version information. Now
   //                     with license text and version information
   // 2018-05-22 0.11 kdk Cleaning up the code.
+  // 2018-06-12 0.12 kdk With Number by websocket to avoid caching...
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.11";
+  var PROG_VERSION = "0.12";
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -131,7 +132,7 @@
 
   </body>
   <script src="actions.js"></script>
-  <script src="websockets.js"></script>
+  <script src="websockets.js?318"></script>
   <script>
     var s = document.getElementById("debugoutputpar");
     s.innerHTML = s.innerHTML + PROG_NAME + " " + PROG_VERSION;
