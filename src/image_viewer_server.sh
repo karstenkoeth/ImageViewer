@@ -14,6 +14,7 @@
 # 2018-05-15 0.08 kdk All commands to webside marked with COMMAND=
 # 2018-05-21 0.10 kdk With license text and include file extension changed from
 #                     inc to bash.
+# 2018-06-12 0.11 kdk With ALBU in output.
 
 # #########################################
 #
@@ -70,7 +71,7 @@
 #
 
 PROG_NAME="image_viewer_server"
-PROG_VERSION="0.10"
+PROG_VERSION="0.11"
 
 # #########################################
 #
@@ -294,7 +295,7 @@ function AlbumName()
 {
   local stmp="$(grep "^$1;" "$ALBUMFILE" | tail -n 1 | cut -d ";" -f 2)"
   if [ -n "$stmp" ] ; then
-    echo "$stmp"
+    echo "ALBU=$stmp"
   fi
 }
 
@@ -582,6 +583,7 @@ while read line; do
       echo "FILE      Print the image file name to stdout."
       echo "OPEN      Shows the picture under MAC OS X"
       echo "GIVE      Print the actual position in filelist to stdout."
+      echo "ALBU      Print the Album Name to a given Album Shortcut to stdout."
       echo "...       More commands available."
     fi
 
