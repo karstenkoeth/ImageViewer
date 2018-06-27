@@ -4,6 +4,7 @@
 /*                                                                            */
 /* 2018-05-22 0.10 kdk First version with Version information + license text  */
 /* 2018-05-22 0.11 kdk With debugoutputpar                                    */
+/* 2018-06-26 0.12 kdk With IValbums                                          */
 
 /*
 #
@@ -95,6 +96,25 @@ h1        { font-family: sans-serif; font-weight:bold;                          
 
 .IVbody {
   margin:10px;
+}
+
+.IValbums {
+  background-color: rgb(65, 94, 116);
+  height:32px;
+}
+
+.IValbumsDiv {
+  margin-right: 20px;
+}
+
+.IValbumsText {
+  background-color: rgb(212, 231, 246);
+  border-radius: 25px;
+  margin: 5px;
+  font-size: 10px;
+  font-weight: normal;
+  padding: 5px;
+  cursor:pointer;
 }
 
 .IVnav {

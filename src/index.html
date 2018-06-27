@@ -11,9 +11,12 @@
   //                     with license text and version information
   // 2018-05-22 0.11 kdk Cleaning up the code.
   // 2018-06-12 0.12 kdk With Number by websocket to avoid caching...
+  // 2018-06-21 0.13 kdk Without mouseover for next pictures
+  // 2018-06-26 0.14 kdk With IValbums
+  // 2018-06-27 0.15 kdk With IValbumsRoot
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.12";
+  var PROG_VERSION = "0.15";
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -83,27 +86,36 @@
       </div>
     </div>
 
+    <div class="IValbums">
+      <section id="IValbumsRoot">
+        <div class="IValbumsDiv">
+          <p class="IValbumsText" onclick="IVAlbumsClick()">+</p>
+        </div>
+      </section>
+    </div>
+
     <div class="IVnav">
       <section>
+        <!-- ######## Old version with: onmouseover="wsImagePos1()" -->
         <div style="width:20%;height:20px;cursor:pointer"
-             onmouseover="wsImagePos1()" onclick="wsImagePos1()">
+             onclick="wsImagePos1()">
           &#8676;
         </div>
         <div style="width:20%;height:20px;cursor:pointer"
-             onmouseover="wsImagePrev()" onclick="wsImagePrev()">
+             onclick="wsImagePrev()">
           &#8592;
         </div>
         <div style="width:20%;height:20px;cursor:pointer"
-             onmouseover="wsImageGoto()" onclick="wsImageGoto()"
+             onclick="wsImageGoto()"
              id="IVListPos">
           =
         </div>
         <div style="width:20%;height:20px;cursor:pointer"
-             onmouseover="wsImageNext()" onclick="wsImageNext()">
+             onclick="wsImageNext()">
           &#8594;
         </div>
         <div style="width:20%;height:20px;cursor:pointer"
-             onmouseover="wsImageLast()" onclick="wsImageLast()">
+             onclick="wsImageLast()">
           &#8677;
         </div>
       </section>
@@ -132,7 +144,7 @@
 
   </body>
   <script src="actions.js"></script>
-  <script src="websockets.js?318"></script>
+  <script src="websockets.js?319_0.15_01"></script>
   <script>
     var s = document.getElementById("debugoutputpar");
     s.innerHTML = s.innerHTML + PROG_NAME + " " + PROG_VERSION;

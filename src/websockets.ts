@@ -16,6 +16,7 @@
 // 2018-05-22 0.10 With license text
 // 2018-05-22 0.11 With automated server ip address
 // 2018-06-12 0.12 With Album Name Parsing
+// 2018-06-26 0.13 With fallback for serveripaddress
 
 // ///////////////////////////////////////////////////////////////////////////
 //
@@ -102,6 +103,8 @@
 
   function wsImagePos1()
   {
+    // Zuerst alle AlbumNamen Buttons entfernen:
+    // TODO
     ws.send('POS1');
     ws.send('FILE');
     ws.send('GIVE');
@@ -111,6 +114,8 @@
 
   function wsImagePrev()
   {
+    // Zuerst alle AlbumNamen Buttons entfernen:
+    // TODO
     ws.send('PREV');
     ws.send('FILE');
     ws.send('GIVE');
@@ -120,6 +125,8 @@
 
   function wsImageGoto()
   {
+    // Zuerst alle AlbumNamen Buttons entfernen:
+    // TODO
     ws.send('GOTO=358');
     ws.send('FILE');
     ws.send('GIVE');
@@ -129,6 +136,8 @@
 
   function wsImageNext()
   {
+    // Zuerst alle AlbumNamen Buttons entfernen:
+    // TODO
     ws.send('NEXT');
     ws.send('FILE');
     ws.send('GIVE');
@@ -138,6 +147,8 @@
 
   function wsImageLast()
   {
+    // Zuerst alle AlbumNamen Buttons entfernen:
+    // TODO
     ws.send('LAST');
     ws.send('FILE');
     ws.send('GIVE');
@@ -153,8 +164,12 @@
   // ///////////////////////////////
   // Setup websocket with callbacks
   let serveripaddress = location.hostname;
-  // Static variant:
-  //let wsURL = 'ws://localhost:8080/';
+  if ( serveripaddress == '' )
+  {
+    // Static variant:
+    //let wsURL = 'ws://localhost:8080/';
+    serveripaddress='localhost';
+  }
   let wsURL = 'ws://'+serveripaddress+':8080/';
   // For Testing:
   //var wsURL = 'ws://echo.websocket.org';
