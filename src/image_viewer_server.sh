@@ -15,6 +15,7 @@
 # 2018-05-21 0.10 kdk With license text and include file extension changed from
 #                     inc to bash.
 # 2018-06-12 0.11 kdk With ALBU in output.
+# 2018-06-21 0.12 kdk With more ideas.
 
 # #########################################
 #
@@ -58,8 +59,22 @@
 # One process has websocket connection to the ipad.
 # Another process has connection to a TFT - browser in fullscreen.
 # Between the two websocket backends - running on the same cpu - there is
-# communication about Signals (see trap) ans shared memory (see ipcs).
-# brew install shmcat
+# communication about Signals (see trap) and shared memory (see ipcs).
+#    brew install shmcat
+# Within the trap (when triggered via a signal), the $? variable is initially
+# set to the signal number plus 128, so you can assign the signal number to a
+# variable by making the first statement of the trap action to something like
+#    sig=$(($? - 128))
+# You can then get the name of the signal using the kill command
+#    kill -l $sig
+# Or:
+#       _handler() {
+#         signal=$1
+#         echo signal was $signal
+#       }
+#
+#       trap '_handler SIGUSR1' SIGUSR1
+#       trap '_handler SIGUSR2' SIGUSR2
 #
 # share Pictures: brew install imessage-ruby
 # Picture per imessage verbreiten.

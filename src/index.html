@@ -14,9 +14,11 @@
   // 2018-06-21 0.13 kdk Without mouseover for next pictures
   // 2018-06-26 0.14 kdk With IValbums
   // 2018-06-27 0.15 kdk With IValbumsRoot
+  // 2018-07-22 0.16 kdk IVAlbumsClick with Parameter
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.15";
+  var PROG_VERSION = "0.16";
+  var PROG_SUBVERSION = "04";
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -88,9 +90,9 @@
 
     <div class="IValbums">
       <section id="IValbumsRoot">
-        <div class="IValbumsDiv">
-          <p class="IValbumsText" onclick="IVAlbumsClick()">+</p>
-        </div>
+        <!-- div class="IValbumsDiv" id="IValbumsDiv0" -->
+          <!-- p class="IValbumsText" onclick="IVAlbumsClick("Mein neuer Text")" >+</p -->
+        <!-- /div -->
       </section>
     </div>
 
@@ -144,7 +146,7 @@
 
   </body>
   <script src="actions.js"></script>
-  <script src="websockets.js?319_0.15_01"></script>
+  <script src="websockets.js?"+ PROG_VERSION + PROG_SUBVERSION></script>
   <script>
     var s = document.getElementById("debugoutputpar");
     s.innerHTML = s.innerHTML + PROG_NAME + " " + PROG_VERSION;

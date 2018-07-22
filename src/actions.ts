@@ -11,6 +11,7 @@
 // 2018-05-22 0.10 kdk With license text
 // 2018-06-26 0.11 kdk With IVAlbumsClick
 // 2018-06-27 0.12 kdk With Content in ...Click
+// 2018-07-22 0.13 kdk With Parameter in ...Click, moved to "websockets"
 
 // ///////////////////////////////////////////////////////////////////////////
 //
@@ -59,17 +60,4 @@ function IVUnShowAlbums(obj)
 {
   //obj.style.width = "320px";
   obj.style.background = "white";
-}
-
-function IVAlbumsClick(obj)
-{
-  wsLog("AlbumClicked");
-  let node = document.createElement("DIV");
-  node.className = "IValbumsDiv";
-  let nodenode = document.createElement("P");
-  nodenode.className = "IValbumsText";
-  node.appendChild(nodenode);
-  let textnode = document.createTextNode("Mein BlaBlub");
-  nodenode.appendChild(textnode);
-  document.getElementById("IValbumsRoot").appendChild(node);
 }

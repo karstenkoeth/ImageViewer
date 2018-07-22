@@ -17,6 +17,11 @@
 // 2018-05-22 0.11 With automated server ip address
 // 2018-06-12 0.12 With Album Name Parsing
 // 2018-06-26 0.13 With fallback for serveripaddress
+// 2018-07-22 0.14 With more comments, IVAlbumsClick, IVAlbumsClean
+
+var WEBSOCKETS_VERSION = "0.14";
+var WEBSOCKETS_SUBVERSION = "05";
+
 
 // ///////////////////////////////////////////////////////////////////////////
 //
@@ -72,6 +77,10 @@
   // TODO: ALBS --> List all shortcuts into an array. Ask for every shortcut
   //                the albumname with ALBU=Shortcut.
 
+  // AlbumSplit
+  // Splits the parameter in all single fields.
+  // Semicolon separated list with one char long fileds.
+  // "content" contains something like "F;G;"
   function AlbumSplit(content)
   {
     var slen=content.length;
@@ -97,14 +106,42 @@
   //   If shortcut exists and image is part from album: Remove image from album (after security question.)
   //   If shortcut exists and image is not part from album: Add to album. AINC=shortcut
 
+  // ///////////////////////////////////////////////
+
+  function IVAlbumsClean()
+  {
+    let child;
+    while (albumcount > 0)
+    {
+      child = document.getElementById("IValbumsDiv0");
+      child.parentNode.removeChild(child);
+      albumcount--;
+      wsLog('--');
+    }
+  }
+
+  function IVAlbumsClick(obj)
+  {
+    wsLog("AlbumClicked");
+    let node = document.createElement("DIV");
+    node.className = "IValbumsDiv";
+    node.id = "IValbumsDiv0";
+    let nodenode = document.createElement("P");
+    nodenode.className = "IValbumsText";
+    node.appendChild(nodenode);
+    let textnode = document.createTextNode(obj);
+    nodenode.appendChild(textnode);
+    document.getElementById("IValbumsRoot").appendChild(node);
+    albumcount++;
+  }
 
   // ///////////////////////////////////////////////
   // Navigation
 
   function wsImagePos1()
   {
-    // Zuerst alle AlbumNamen Buttons entfernen:
-    // TODO
+    // First: clear all labels:
+    IVAlbumsClean();
     ws.send('POS1');
     ws.send('FILE');
     ws.send('GIVE');
@@ -114,8 +151,7 @@
 
   function wsImagePrev()
   {
-    // Zuerst alle AlbumNamen Buttons entfernen:
-    // TODO
+    IVAlbumsClean();
     ws.send('PREV');
     ws.send('FILE');
     ws.send('GIVE');
@@ -125,8 +161,7 @@
 
   function wsImageGoto()
   {
-    // Zuerst alle AlbumNamen Buttons entfernen:
-    // TODO
+    IVAlbumsClean();
     ws.send('GOTO=358');
     ws.send('FILE');
     ws.send('GIVE');
@@ -136,8 +171,7 @@
 
   function wsImageNext()
   {
-    // Zuerst alle AlbumNamen Buttons entfernen:
-    // TODO
+    IVAlbumsClean();
     ws.send('NEXT');
     ws.send('FILE');
     ws.send('GIVE');
@@ -147,8 +181,7 @@
 
   function wsImageLast()
   {
-    // Zuerst alle AlbumNamen Buttons entfernen:
-    // TODO
+    IVAlbumsClean();
     ws.send('LAST');
     ws.send('FILE');
     ws.send('GIVE');
@@ -174,6 +207,10 @@
   // For Testing:
   //var wsURL = 'ws://echo.websocket.org';
 
+  let albumcount : number = 0;
+
+  //
+  wsLog('Version: ' + WEBSOCKETS_VERSION + '-' + WEBSOCKETS_SUBVERSION)
   wsLog('CONNECTING ' + wsURL + ' ...')
   let ws = new WebSocket(wsURL);
 
@@ -210,12 +247,14 @@
     {
       // FALB - the album shortcuts the given UUID is in.
       // "content" contains something like "F;G;"
+      // This function asks for every name and displays the name immediatly:
       AlbumSplit(content);
     }
     if ( command == 'ALBU')
     {
       // ALBU - Print the Album Name to a given Album Shortcut
       // TODO: Irgendwie anzeigen. Und zwar die Albumnamen anzeigen, nicht die Shortcuts.
+      IVAlbumsClick(content);
       wsLog('AlbumName: '+content);
     }
   };

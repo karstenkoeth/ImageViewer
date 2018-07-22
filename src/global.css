@@ -101,6 +101,10 @@ h1        { font-family: sans-serif; font-weight:bold;                          
 .IValbums {
   background-color: rgb(65, 94, 116);
   height:32px;
+  margin:0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 100%;
 }
 
 .IValbumsDiv {
