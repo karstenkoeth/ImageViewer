@@ -20,9 +20,10 @@
 // 2018-07-22 0.14 With more comments, IVAlbumsClick, IVAlbumsClean
 // 2019-01-21 0.15 With "B->S" for Logging messages
 // 2019-01-22 0.16 With more Album functions
+// 2019-01-24 0.17 Normal key handling for complete Page
 
-var WEBSOCKETS_VERSION = "0.16";
-var WEBSOCKETS_SUBVERSION = "11";
+var WEBSOCKETS_VERSION = "0.17";
+var WEBSOCKETS_SUBVERSION = "10";
 
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -246,79 +247,107 @@ var WEBSOCKETS_SUBVERSION = "11";
   //
   // https://www.w3schools.com/jsref/obj_keyboardevent.asp
   //
+  // Modifiers:
+  //
+  // event.shiftKey
+  // event.ctrlKey
+  // event.altKey
+  // event.metaKey
+  //
 
   function IVInterpretKey(event)
   {
     let myKey = event.key;
 
-    if ( myKey == 'Control')
-    {
-      myKeyCtrl=true;
-      wsLog('B    Ctrl-Key');
-    }
-    else
-    {
+    // if ( myKey == 'Control') It is only CTRL key without other normal keyes pressed.
+
       wsLog('B    Key: '+myKey);
-      if ( myKeyCtrl )
+
+      if ( ! event.shiftKey && event.ctrlKey && ! event.altKey && ! event.metaKey )
       {
         // BEGIN Control Level
         wsLog('B    Control Level');
+
         if ( myKey == 'a' )
         {
           ws.send('ALBA');
           wsLog('B->S ALBA');
+        }
+        if ( myKey == 'e' )
+        {
+          ws.send('EXPO');
+          wsLog('B->S EXPO Export the actual file...');
         }
         if ( myKey == 'h' )
         {
           HideAlbums();
           wsLog('HideAlbums');
         }
+        if ( myKey == 'i' )
+        {
+          ws.send('FILE');
+          // wsLog('B->S FILE Print the filename.');
+          wsLog('B<-S FILE ' + filename);
+        }
         if ( myKey == 's' )
         {
           ws.send('ALBS');
           wsLog('B->S ALBS');
         }
-        if ( myKey == 'x' )
-        {
-          ShowAlbums("Hallo");
-          wsLog('ShowAlbums');
-        }
-        if (myKey == 't' )
-        {
-          if (event.ctrlKey)
-          {
-            wsLog('Key with Ctrl');
-          } else {
-            wsLog('Key without Ctrl');
-          }
-        }
         // END Control Level
-        myKeyCtrl=false;
       }
-      else
-      {
-        // BEGIN Album Level
-        wsLog('B    Album Level');
-        // The Server accepts only uppercase letters:
-        let myShortcut = myKey.toUpperCase();
-        wsLog('B    ' + myShortcut + ' ' + albumshortcuts);
-        if ( albumshortcuts.search(myShortcut) == -1 )
-        {
-          // Not found --> Include it in album:
-          ws.send('AINC='+myShortcut);
-          wsLog('B->S AINC');
-        } else {
-          // It's in, so I will remove the image from album:
-          ws.send('AEXC='+myShortcut);
-          wsLog('B->S AEXC');
-        }
-        // Update view:
-        IVAlbumsClean();
-        ws.send('FALB');
 
-        // END Album Level
+      if ( ! event.shiftKey && ! event.ctrlKey && ! event.altKey && ! event.metaKey )
+      {
+        if (  ( myKey == 'ArrowUp' ) || ( myKey == 'ArrowDown' ) || ( myKey == 'ArrowLeft' ) || ( myKey == 'ArrowRight' )  )
+        {
+          // BEGIN Arrow Level
+          if ( myKey == 'ArrowUp' )
+          {
+            wsLog('UP');
+          }
+          if ( myKey == 'ArrowDown' )
+          {
+            wsLog('DOWN');
+          }
+          if ( myKey == 'ArrowLeft' )
+          {
+            wsImagePrev();
+            wsLog('LEFT');
+          }
+          if ( myKey == 'ArrowRight' )
+          {
+            wsImageNext();
+            wsLog('RIGHT');
+          }
+          // END Arrow Level
+        } else {
+           // BEGIN Album Level
+          wsLog('B    Album Level');
+
+          // The Server accepts only uppercase letters:
+          let myShortcut = myKey.toUpperCase();
+          wsLog('B    ' + myShortcut + ' ' + albumshortcuts);
+          if ( albumshortcuts.search(myShortcut) == -1 )
+          {
+            // Not found --> Include it in album:
+            ws.send('AINC='+myShortcut);
+            wsLog('B->S AINC');
+          } else {
+            // It's in, so I will remove the image from album:
+            ws.send('AEXC='+myShortcut);
+            wsLog('B->S AEXC');
+          }
+          // Update view:
+          IVAlbumsClean();
+          ws.send('FALB');
+
+          // END Album Level
+
+        }
+
       }
-    }
+
   }
 
   // ///////////////////////////////////////////////
@@ -341,22 +370,32 @@ var WEBSOCKETS_SUBVERSION = "11";
 
   let albumcount : number = 0;
   let albumscount : number = 0;
-  let myKeyCtrl : boolean = false;
-  let albumshortcuts = "";
-  let imageuuid = "";
+  let albumshortcuts : string = "";
+  let imageuuid : string = "";
+  let filename : string = "";
+  let connected : boolean = false;
 
-  //
+  // Register Keydown events:
+  document.addEventListener("keydown", IVInterpretKey);
+
+  // Start WebSocket
   wsLog('Version: ' + WEBSOCKETS_VERSION + '-' + WEBSOCKETS_SUBVERSION)
   wsLog('CONNECTING ' + wsURL + ' ...')
   let ws = new WebSocket(wsURL);
 
+  // TODO
+  // create timer: if "! connected" then try reconnect ...
+  // setTimeout(function(),time);
+
   ws.onopen = function() {
     wsLog('CONNECTED');
+    connected = true;
     wsImageVers();
   };
 
   ws.onclose = function() {
     wsLog('DISCONNECT');
+    connected = false;
   };
 
   ws.onmessage = function(msg) {
@@ -373,6 +412,18 @@ var WEBSOCKETS_SUBVERSION = "11";
       // FILE - image file name
       let img = document.getElementById('IVImageMid');
       img.setAttribute('src', './Thumbnails/' + content);
+      // $DATETIME.$UUID.$WIDTH"x"$HEIGHT.$CAMERA.THUMB.$FILENAME
+      // 2011-04-07.15_57_58.F1EB38C4-78E3-4AA8-9148-9A10AD330053.5184x3456.Canon-EOS-60D.THUMB.IMG_0514.JPG.png
+      filename=content;
+      let sstr = filename.split(".");
+      let filenameDate : string = sstr[0];
+      let filenameTime : string = sstr[1];
+      let filenameDimensions : string = sstr[3];
+      let filenameCamera : string = sstr[4];
+      wsLog(filenameDate);
+      wsLog(filenameTime);
+      wsLog(filenameDimensions);
+      wsLog(filenameCamera);
     }
     if ( command == 'GIVE')
     {
@@ -412,6 +463,8 @@ var WEBSOCKETS_SUBVERSION = "11";
 
   ws.onerror = function(msg)
   {
+    // The following errors occured:
+    // [object event] --> The server was down.
     wsLog('ERROR: ' + msg);
   };
 

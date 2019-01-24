@@ -18,6 +18,7 @@
 # 2018-06-21 0.12 kdk With more ideas.
 # 2019-01-21 0.13 kdk Version updated.
 # 2019-01-22 0.14 kdk AlbumName extended with 2. parameter
+# 2019-01-24 0.15 kdk Export Bug fixed
 
 # #########################################
 #
@@ -88,7 +89,7 @@
 #
 
 PROG_NAME="image_viewer_server"
-PROG_VERSION="0.14"
+PROG_VERSION="0.15"
 
 # #########################################
 #
@@ -198,7 +199,9 @@ function ListFile()
   local ssstmp="$(basename "$sstmp")"
   # Print the filename without path:
   # COMMAND=FILE
-  echo "FILE=$ssstmp"
+  # echo "FILE=$ssstmp"
+  # COMMAND must be added in main loop to support export, ...
+  echo "$ssstmp"
   # Print the file name with relative path for webbrowser:
   #echo "$WEBTHUMBNAIL/$ssstmp"
 }
@@ -683,7 +686,7 @@ while read line; do
 
     if [ "$CMD" = "FILE" ] ; then
       # Print the filename on stdout:
-      ListFile
+      echo "FILE=$(ListFile)"
     fi
 
     if [ "$CMD" = "OPEN" ] ; then
