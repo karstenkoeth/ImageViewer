@@ -16,6 +16,8 @@
 #                     inc to bash.
 # 2018-06-12 0.11 kdk With ALBU in output.
 # 2018-06-21 0.12 kdk With more ideas.
+# 2019-01-21 0.13 kdk Version updated.
+# 2019-01-22 0.14 kdk AlbumName extended with 2. parameter
 
 # #########################################
 #
@@ -86,7 +88,7 @@
 #
 
 PROG_NAME="image_viewer_server"
-PROG_VERSION="0.11"
+PROG_VERSION="0.14"
 
 # #########################################
 #
@@ -310,7 +312,11 @@ function AlbumName()
 {
   local stmp="$(grep "^$1;" "$ALBUMFILE" | tail -n 1 | cut -d ";" -f 2)"
   if [ -n "$stmp" ] ; then
-    echo "ALBU=$stmp"
+    if [ $# -ge 2 ] ; then
+      echo "$stmp"
+    else
+      echo "ALBU=$stmp"
+    fi
   fi
 }
 
@@ -327,7 +333,10 @@ function AlbumAll()
   # For all uppercase letters:
   while [ "$ctmp" != "a" ] ; do
     echod "AlbumAll" "$itmp : '$ctmp'"
-    AlbumName "$ctmp"
+    local stmp=$(AlbumName "$ctmp" "A")
+    if [ -n "$stmp" ] ; then
+      echo "ALBA=$stmp"
+    fi
     itmp=$(expr $itmp + 1)
     ctmp="${stest[$itmp]}"
   done
@@ -349,7 +358,7 @@ function AlbumShort()
     # Only if a Album name is returned, we have a shortcut found:
     local stmp=$(AlbumName "$ctmp")
     if [ -n "$stmp" ] ; then
-      echo "$ctmp"
+      echo "ALBS=$ctmp"
     fi
     itmp=$(expr $itmp + 1)
     ctmp="${stest[$itmp]}"
@@ -664,7 +673,7 @@ while read line; do
 
     if [ "$CMD" = "SHOW" ] ; then
       # Print the UUID on stdout:
-      echo "${ListFileNames[$ListPos]}"
+      echo "SHOW=${ListFileNames[$ListPos]}"
     fi
 
     if [ "$CMD" = "FALB" ] ; then

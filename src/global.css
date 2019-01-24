@@ -164,6 +164,15 @@ h1        { font-family: sans-serif; font-weight:bold;                          
   background: linear-gradient(180deg, #fff 0%, #fff 0%, #e6e6e6 100%, #e6e6e6 100%);
 }
 
+.IValbumsOverview {
+  background-color: rgb(65, 94, 116);
+  height:64px;
+  margin:0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 100%;
+}
+
 #debugoutputpar {
   font-size: 10px;
 }
