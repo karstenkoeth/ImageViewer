@@ -5,6 +5,7 @@
 /* 2018-05-22 0.10 kdk First version with Version information + license text  */
 /* 2018-05-22 0.11 kdk With debugoutputpar                                    */
 /* 2018-06-26 0.12 kdk With IValbums                                          */
+/* 2019-02-09 0.13 kdk Also adapted for koeth.cloud                           */
 
 /*
 #
@@ -48,8 +49,20 @@ section {
 
 p         { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 12px; }
 h1        { font-family: sans-serif; font-weight:bold;                                                  }
+h2        { font-family: sans-serif; font-weight:bold;                                                  }
+h3        { font-family: sans-serif; font-weight:bold;                                                  }
+h4        { font-family: sans-serif; font-weight:bold;                                                  }
 #Uhr      { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 100px; }
 #debugoutput { font-family: monospace; font-size: 10px; }
+
+/* unvisited link */
+a:link    { text-decoration: none; color: black; }
+/* visited link */
+a:visited { text-decoration: none; color: black; }
+/* mouse over link */
+a:hover   { text-decoration: none; color: rgb(212, 231, 246); } /* lightprimarycolor TODO make it right */
+/* selected link */
+a:active  { text-decoration: none; color: black; }
 
 #IVlabel {
   font-family: 'Open Sans', sans-serif;
@@ -175,4 +188,9 @@ h1        { font-family: sans-serif; font-weight:bold;                          
 
 #debugoutputpar {
   font-size: 10px;
+}
+
+.impressum {
+  font-size: 10px;
+  text-align:left;
 }

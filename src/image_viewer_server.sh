@@ -19,6 +19,8 @@
 # 2019-01-21 0.13 kdk Version updated.
 # 2019-01-22 0.14 kdk AlbumName extended with 2. parameter
 # 2019-01-24 0.15 kdk Export Bug fixed
+# 2019-02-23 0.16 kdk AGET in echo, with AlbumJSON
+# 2019-02-25 0.17 kdk With ALBC + ALBD echo outout to inform client.
 
 # #########################################
 #
@@ -89,7 +91,7 @@
 #
 
 PROG_NAME="image_viewer_server"
-PROG_VERSION="0.15"
+PROG_VERSION="0.17"
 
 # #########################################
 #
@@ -324,6 +326,27 @@ function AlbumName()
 }
 
 # #########################################
+# AlbumJSON
+# Shows all defined Album Names with shortcuts.
+function AlbumJSON()
+{
+  # Init:
+  stest=( {A..Z} {a..z} {0..9} + / = )
+  local itmp=0
+  local ctmp="${stest[$itmp]}"
+  # For all uppercase letters:
+  while [ "$ctmp" != "a" ] ; do
+    echod "AlbumAll" "$itmp : '$ctmp'"
+    local stmp=$(AlbumName "$ctmp" "A")
+    if [ -n "$stmp" ] ; then
+      echo "ALBJ=$ctmp:$stmp"
+    fi
+    itmp=$(expr $itmp + 1)
+    ctmp="${stest[$itmp]}"
+  done
+}
+
+# #########################################
 # AlbumAll
 # Shows all defined Album Names.
 # Shows in every line an album name.
@@ -429,6 +452,8 @@ function AlbumSet()
     if [ -n "$stmp" ] ; then
       # Album exists.
       AlbumActual="$1"
+      # Show actual status:
+      echo "ASET=$1"
       # If we are at the moment in using Album for the List, then immediatly
       # reread Content of List:
       if [ $ListType -eq 2 ] ; then
@@ -437,7 +462,7 @@ function AlbumSet()
     else
       # Wrong Album, unset variable:
       echod "AlbumSet" "Unset AlbumActual"
-      AlbumActual="0"
+      AlbumActual="1"
     fi
   else
     echod "AlbumSet" "Parameter needed."
@@ -449,7 +474,7 @@ function AlbumSet()
 # Get the actual Album List* is working on
 function AlbumGet()
 {
-  echo "$AlbumActual"
+  echo "AGET=$AlbumActual"
 }
 
 # #########################################
@@ -727,16 +752,23 @@ while read line; do
       AlbumShort
     fi
 
+    if [ "$CMD" = "ALBJ" ] ; then
+      # Print all albumnames with shortcuts on stdout:
+      AlbumJSON
+    fi
+
     if [ "$CMD" = "ALBC" ] ; then
       # Create or change one Album Name
       # e.g. AlbumCreate "C;Cäsar"
       AlbumCreate "$DATA"
+      echo "ALBC=$DATA"
     fi
 
     if [ "$CMD" = "ALBD" ] ; then
       # Delete one shortcut:
       # e.g. AlbumDelete "C"
       AlbumDelete "$DATA"
+      echo "ALBD=$DATA"
     fi
 
     # Album* Commands for the collection of album files:

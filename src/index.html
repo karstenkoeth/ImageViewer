@@ -17,10 +17,12 @@
   // 2018-07-22 0.16 kdk IVAlbumsClick with Parameter
   // 2019-01-21 0.17 kdk Without black white switch and with Keyboard support
   // 2019-01-22 0.18 kdk With basic ShowAlbums
+  // 2019-02-17 0.19 kdk With normal key event handling and link zu information
+  // 2019-02-25 0.20 kdk With always visible Albums
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.18";
-  var PROG_SUBVERSION = "03";
+  var PROG_VERSION = "0.20";
+  var PROG_SUBVERSION = "04";
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -64,11 +66,14 @@
         <div style="width:20%;height:20px;">
           Scan
         </div>
-        <div style="width:20%;height:20px;">
-          Category: xxx
+        <div style="width:20%;height:20px;cursor:pointer" onclick="window.open('information.html','Information',
+              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')">
+          <!-- Category: xxx -->
+          Information
         </div>
         <div style="width:20%;height:20px;">
           Slideshow
+          <!-- Shows one Album -->
         </div>
         <div style="width:20%;height:20px;">
           Export
@@ -79,13 +84,16 @@
     <div class="IVbody">
       <div id="IVpool">
         <div style="width:30%" id="IVimage">
-        <!-- div style="width:30%" id="IVimage" onmouseover="IVShowAlbums(this)" onmouseout="IVUnShowAlbums(this)" -->
+          <!-- See actions.ts for the next two functions: -->
+          <!-- div style="width:30%" id="IVimage" onmouseover="IVShowAlbums(this)" onmouseout="IVUnShowAlbums(this)" -->
           <img src="./img/schnee.png"/>
         </div>
-        <div style="width:30%" id="IVimage" onkeydown="IVInterpretKey(event)"> <!-- TODO catch keyboard event here! -->
+        <div style="width:30%" id="IVimage">
+        <!-- div style="width:30%" id="IVimage" onkeydown="IVInterpretKey(event)" -->
           <img id="IVImageMid" src="./img/default.png"/>
         </div>
-        <div style="width:30%" id="IVimage" onmouseover="wsImageVers()">
+        <div style="width:30%" id="IVimage">
+        <!-- div style="width:30%" id="IVimage" onmouseover="wsImageVers()" -->
           <img src="./img/wolken.png"/>
         </div>
       </div>
@@ -111,7 +119,7 @@
           &#8592;
         </div>
         <div style="width:20%;height:20px;cursor:pointer"
-             onclick="wsImageGoto()"
+             onclick="wsImageGoto(42)"
              id="IVListPos">
           =
         </div>
@@ -126,21 +134,25 @@
       </section>
     </div>
 
+    <div class="IValbumsOverview">
+      <section id="IValbumsShow">
+        <!-- div class="IValbumsDiv" id="IValbumsDiv0" -->
+          <!-- p class="IValbumsText" onclick="IVAlbumsClick("Mein neuer Text")" >+</p -->
+        <!-- /div -->
+        <div class="IValbumsDiv">
+          <p class="IValbumsText" title="+" onclick="IVAlbumsCreate('X;X-Men')">+</p>
+        </div>
+      </section>
+    </div>
+
     <!-- ################################################################### -->
 
-    <div style="margin:8px;">
+    <div id="IVProgrammersPoint" style="margin:8px;">
+    <!-- div id="IVProgrammersPoint" style="margin:8px; display: none;" --> <!-- If having none from the beginning, loggingtmp has useless value. -->
 
       <h1>
         Programmer's Point
       </h1>
-
-      <div class="IValbumsOverview">
-        <section id="IValbumsShow">
-          <!-- div class="IValbumsDiv" id="IValbumsDiv0" -->
-            <!-- p class="IValbumsText" onclick="IVAlbumsClick("Mein neuer Text")" >+</p -->
-          <!-- /div -->
-        </section>
-      </div>
 
       <!-- For WebSocket test: -->
       <pre id="wslogoutput"></pre>
@@ -156,7 +168,7 @@
     <!-- ################################################################### -->
 
   </body>
-  <script src="actions.js"></script>
+  <!-- script src="actions.js" /script -->
   <script src="websockets.js?"+ PROG_VERSION + PROG_SUBVERSION></script>
   <script>
     var s = document.getElementById("debugoutputpar");

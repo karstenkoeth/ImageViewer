@@ -52,7 +52,7 @@ cd ./src/
 echo "Starting ..."
 
 echo "Transcode ..."
-tsc actions.ts
+#tsc actions.ts
 tsc websockets.ts
 #tsc renderer.ts
 
@@ -73,9 +73,10 @@ echo "Install Website ..."
 cp index.html "$TARGET"
 cp global.css "$TARGET"
 cp settings.html "$TARGET"
+cp information.html "$TARGET"
 
 # Actions
-cp actions.js "$TARGET"
+#cp actions.js "$TARGET"
 cp websockets.js "$TARGET"
 #cp renderer.js "$TARGET"
 

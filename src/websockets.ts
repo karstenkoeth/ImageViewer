@@ -21,9 +21,12 @@
 // 2019-01-21 0.15 With "B->S" for Logging messages
 // 2019-01-22 0.16 With more Album functions
 // 2019-01-24 0.17 Normal key handling for complete Page
+// 2019-02-17 0.18 More key handling
+// 2019-02-23 0.19 Can shut down the server ;-)
+// 2019-02-25 0.20 With AlbumsList as standard
 
-var WEBSOCKETS_VERSION = "0.17";
-var WEBSOCKETS_SUBVERSION = "10";
+var WEBSOCKETS_VERSION = "0.20";
+var WEBSOCKETS_SUBVERSION = "04";
 
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -58,7 +61,15 @@ var WEBSOCKETS_SUBVERSION = "10";
   function wsLog(msg)
   {
     let text = document.getElementById('wslogoutput').textContent;
-    document.getElementById('wslogoutput').textContent= msg + '\n' + text;
+    if ( logging == true )
+    {
+      document.getElementById('wslogoutput').textContent= msg + '\n' + text;
+    }
+  }
+
+  function wsStart()
+  {
+    ws = new WebSocket(wsURL);
   }
 
   function wsDebugSend()
@@ -72,6 +83,7 @@ var WEBSOCKETS_SUBVERSION = "10";
   {
     ws.send('VERS');
     wsLog('B->S VERS');
+    wsLog('websockets ' + WEBSOCKETS_VERSION + '-' + WEBSOCKETS_SUBVERSION)
   }
 
   // ///////////////////////////////////////////////
@@ -82,7 +94,7 @@ var WEBSOCKETS_SUBVERSION = "10";
 
   function AlbumsList(content)
   {
-    wsLog('B<-S All Albums: '+content);
+    // wsLog('B<-S All Albums: '+content);
     ShowAlbums(content);
   }
 
@@ -137,8 +149,8 @@ var WEBSOCKETS_SUBVERSION = "10";
 
   function IVAlbumsClick(obj)
   {
-    wsLog('B<-S AlbumName: '+obj);
-    wsLog("B    AlbumsClick: Create new album element in DOM.");
+    //wsLog('B<-S AlbumName: '+obj);
+    //wsLog("B    AlbumsClick: Create new album element in DOM.");
     let node = document.createElement("DIV");
     node.className = "IValbumsDiv";
     node.id = "IValbumsDiv0";
@@ -151,6 +163,11 @@ var WEBSOCKETS_SUBVERSION = "10";
     albumcount++;
   }
 
+  function IVAlbumsCreate(obj)
+  {
+    ws.send('ALBC='+obj);
+    wsLog('B->S Create or change Album '+obj);
+  }
 
   function ShowAlbums(obj)
   {
@@ -162,7 +179,81 @@ var WEBSOCKETS_SUBVERSION = "10";
     pnode.className = "IValbumsText";
     divnode.appendChild(pnode);
 
-    let tnode = document.createTextNode(obj);
+    // Test for Shortcut with Albumname (ALBJ Functionality):
+    let str = obj;
+    let sstr = str.split(":");
+    let strshort = sstr[0];
+    let strname = sstr[1];
+    let struse;
+    if ( strname.length > 0 )
+    {
+      // With Shortcut
+      struse=strname;
+      pnode.title=strshort;
+      pnode.addEventListener("click", function(){
+        // left mouse button click
+        if ( actalbumobj != null )
+        {
+          // a album is set as active
+          if ( actalbumobj == this )
+          {
+            // change to all album mode:
+            wsLog('B->S Set All Album mode');
+            ws.send('SWIT=L');
+            // change to normal mode:
+            this.style.backgroundColor="rgb(212, 231, 246)";
+            actalbumobj=null;
+            // We can stay by the actual image.
+          }
+          else
+          {
+            // change the other album to 'normal' mode:
+            actalbumobj.style.backgroundColor="rgb(212, 231, 246)";
+            // make this album the one and only:
+            let tmpstr=this.title;
+            wsLog('B->S Set Album to ' + tmpstr);
+            ws.send('ASET=' + tmpstr);
+            this.style.backgroundColor="rgb(137, 196, 244)";
+            actalbumobj=this;
+            // Goto first image in this album:
+            wsImageGoto(0);
+          }
+        }
+        else
+        {
+          // Change this album to 'actual' mode:
+          let tmpstr=this.title;
+          wsLog('B->S Set Album to ' + tmpstr);
+          // Switch album mode on:
+          ws.send('SWIT=A');
+          // Set this album as actual:
+          ws.send('ASET=' + tmpstr);
+          this.style.backgroundColor="rgb(137, 196, 244)";
+          actalbumobj=this;
+          // Goto first image in this album:
+          wsImageGoto(0);
+       }
+      });
+      pnode.addEventListener("contextmenu", function(event){
+        // right mouse button click
+        event.preventDefault();
+        let tmpstr=this.title;
+        // Make shure we are not in the album we delete, therefore change to all album mode:
+        wsLog('B->S Set All Album mode');
+        ws.send('SWIT=L');
+        wsLog('B->S Delete Album: '+tmpstr);
+        ws.send('ALBD='+tmpstr);
+        // Rebuild Album structure later by receiving "ALBD" ...
+        return false;
+      }, false);
+    }
+    else
+    {
+      // Without Shortcut
+      struse=obj;
+    }
+
+    let tnode = document.createTextNode(struse);
     pnode.appendChild(tnode);
     document.getElementById("IValbumsShow").appendChild(divnode);
     document.getElementById("IValbumsShow").style.visibility="visible";
@@ -183,6 +274,12 @@ var WEBSOCKETS_SUBVERSION = "10";
     }
   }
 
+  function wsAlbumsList()
+  {
+    ws.send('ALBJ');
+    // wsLog('B->S ALBJ');
+  }
+
   // ///////////////////////////////////////////////
   // Navigation
 
@@ -195,7 +292,7 @@ var WEBSOCKETS_SUBVERSION = "10";
     ws.send('GIVE');
     ws.send('FALB');
     ws.send('SHOW');
-    wsLog('B->S POS1');
+    //wsLog('B->S POS1');
   }
 
   function wsImagePrev()
@@ -206,18 +303,18 @@ var WEBSOCKETS_SUBVERSION = "10";
     ws.send('GIVE');
     ws.send('FALB');
     ws.send('SHOW');
-    wsLog('B->S PREV');
+    //wsLog('B->S PREV');
   }
 
-  function wsImageGoto()
+  function wsImageGoto(number)
   {
     IVAlbumsClean();
-    ws.send('GOTO=358');
+    ws.send('GOTO='+number);
     ws.send('FILE');
     ws.send('GIVE');
     ws.send('FALB');
     ws.send('SHOW');
-    wsLog('B->S GOTO');
+    //wsLog('B->S GOTO');
   }
 
   function wsImageNext()
@@ -228,7 +325,7 @@ var WEBSOCKETS_SUBVERSION = "10";
     ws.send('GIVE');
     ws.send('FALB');
     ws.send('SHOW');
-    wsLog('B->S NEXT');
+    //wsLog('B->S NEXT');
   }
 
   function wsImageLast()
@@ -239,7 +336,7 @@ var WEBSOCKETS_SUBVERSION = "10";
     ws.send('GIVE');
     ws.send('FALB');
     ws.send('SHOW');
-    wsLog('B->S LAST');
+    //wsLog('B->S LAST');
   }
 
   // ///////////////////////////////////////////////
@@ -263,9 +360,9 @@ var WEBSOCKETS_SUBVERSION = "10";
 
       wsLog('B    Key: '+myKey);
 
-      if ( ! event.shiftKey && event.ctrlKey && ! event.altKey && ! event.metaKey )
+      if ( event.ctrlKey && ! event.altKey && ! event.metaKey )
       {
-        // BEGIN Control Level
+        // BEGIN Control Level /////////////////////////////////////////////////
         wsLog('B    Control Level');
 
         if ( myKey == 'a' )
@@ -273,10 +370,36 @@ var WEBSOCKETS_SUBVERSION = "10";
           ws.send('ALBA');
           wsLog('B->S ALBA');
         }
+        if ( myKey == 'd' )
+        {
+          if ( logging == true)
+          {
+            logging = false;
+            document.getElementById("IVProgrammersPoint").style.display = "none";
+          }
+          else
+          {
+            logging = true;
+            document.getElementById("IVProgrammersPoint").style.display = loggingtmp;
+          }
+        }
         if ( myKey == 'e' )
         {
           ws.send('EXPO');
           wsLog('B->S EXPO Export the actual file...');
+        }
+        if ( myKey == 'g' )
+        {
+          // Get the global variable which define which album will be used with List* commands.
+          ws.send('AGET');
+        }
+        if ( myKey == 'G' )
+        {
+          // Set the global variable which define which album will be used with List* commands.
+          // "A" : List contains filenames from one album.
+          // "L" : List contains filenames from all files.
+          ws.send('SWIT=A');
+          ws.send('ASET=' + actalbum);
         }
         if ( myKey == 'h' )
         {
@@ -289,60 +412,78 @@ var WEBSOCKETS_SUBVERSION = "10";
           // wsLog('B->S FILE Print the filename.');
           wsLog('B<-S FILE ' + filename);
         }
+        if ( myKey == 'j' )
+        {
+          wsAlbumsList();
+        }
+        if ( myKey == 'q' )
+        {
+          // Kill Server
+          ws.send('QUIT');
+          wsLog('B->S QUIT');
+        }
         if ( myKey == 's' )
         {
+          // Print all used shortcuts
           ws.send('ALBS');
           wsLog('B->S ALBS');
         }
-        // END Control Level
+        if ( myKey == 'v' )
+        {
+          // Debug: Show Version
+          wsImageVers();
+        }
+        // END Control Level ///////////////////////////////////////////////////
       }
 
       if ( ! event.shiftKey && ! event.ctrlKey && ! event.altKey && ! event.metaKey )
       {
         if (  ( myKey == 'ArrowUp' ) || ( myKey == 'ArrowDown' ) || ( myKey == 'ArrowLeft' ) || ( myKey == 'ArrowRight' )  )
         {
-          // BEGIN Arrow Level
+          // BEGIN Arrow Level /////////////////////////////////////////////////
           if ( myKey == 'ArrowUp' )
           {
-            wsLog('UP');
+            wsImagePos1();
+            //wsLog('UP');
           }
           if ( myKey == 'ArrowDown' )
           {
-            wsLog('DOWN');
+            wsImageLast();
+            //wsLog('DOWN');
           }
           if ( myKey == 'ArrowLeft' )
           {
             wsImagePrev();
-            wsLog('LEFT');
+            //wsLog('LEFT');
           }
           if ( myKey == 'ArrowRight' )
           {
             wsImageNext();
-            wsLog('RIGHT');
+            //wsLog('RIGHT');
           }
-          // END Arrow Level
+          // END Arrow Level ///////////////////////////////////////////////////
         } else {
-           // BEGIN Album Level
-          wsLog('B    Album Level');
+          // BEGIN Album Level /////////////////////////////////////////////////
+          //wsLog('B    Album Level');
 
           // The Server accepts only uppercase letters:
           let myShortcut = myKey.toUpperCase();
-          wsLog('B    ' + myShortcut + ' ' + albumshortcuts);
+          //wsLog('B    ' + myShortcut + ' ' + albumshortcuts);
           if ( albumshortcuts.search(myShortcut) == -1 )
           {
             // Not found --> Include it in album:
             ws.send('AINC='+myShortcut);
-            wsLog('B->S AINC');
+            //wsLog('B->S AINC');
           } else {
             // It's in, so I will remove the image from album:
             ws.send('AEXC='+myShortcut);
-            wsLog('B->S AEXC');
+            //wsLog('B->S AEXC');
           }
           // Update view:
           IVAlbumsClean();
           ws.send('FALB');
 
-          // END Album Level
+          // END Album Level ///////////////////////////////////////////////////
 
         }
 
@@ -350,7 +491,7 @@ var WEBSOCKETS_SUBVERSION = "10";
 
   }
 
-  // ///////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////////////
   //
   // main
   //
@@ -371,16 +512,20 @@ var WEBSOCKETS_SUBVERSION = "10";
   let albumcount : number = 0;
   let albumscount : number = 0;
   let albumshortcuts : string = "";
+  let actalbum : string ="0";
+  let actalbumobj = null;
   let imageuuid : string = "";
   let filename : string = "";
   let connected : boolean = false;
+  let logging : boolean = false;
+  var loggingtmp = document.getElementById("IVProgrammersPoint").style.display;
 
   // Register Keydown events:
   document.addEventListener("keydown", IVInterpretKey);
 
   // Start WebSocket
-  wsLog('Version: ' + WEBSOCKETS_VERSION + '-' + WEBSOCKETS_SUBVERSION)
-  wsLog('CONNECTING ' + wsURL + ' ...')
+  wsLog('Version: ' + WEBSOCKETS_VERSION + '-' + WEBSOCKETS_SUBVERSION);
+  wsLog('CONNECTING ' + wsURL + ' ...');
   let ws = new WebSocket(wsURL);
 
   // TODO
@@ -391,11 +536,13 @@ var WEBSOCKETS_SUBVERSION = "10";
     wsLog('CONNECTED');
     connected = true;
     wsImageVers();
+    wsAlbumsList();
   };
 
   ws.onclose = function() {
     wsLog('DISCONNECT');
     connected = false;
+    // TODO: reconnect, setInterval(), wsStart()
   };
 
   ws.onmessage = function(msg) {
@@ -406,7 +553,15 @@ var WEBSOCKETS_SUBVERSION = "10";
     let sstr = str.split("=");
     let command = sstr[0];
     let content = sstr[1];
-    // Do Command:
+    // Do Command: /////////////////////////////////////////////////////////////
+    if ( command == 'ACKN')
+    {
+      // at the moment, only one status is known:
+      if ( content == 'Quit')
+      {
+        wsLog('B<-S Server has quit.');
+      }
+    }
     if ( command == 'FILE')
     {
       // FILE - image file name
@@ -420,9 +575,14 @@ var WEBSOCKETS_SUBVERSION = "10";
       let filenameTime : string = sstr[1];
       let filenameDimensions : string = sstr[3];
       let filenameCamera : string = sstr[4];
+      // TODO: Wie komme ich an die Informationen vom Kinder Fenster?
+      //document.getElementById("IVTextInformationDate").textContent=filenameDate;
       wsLog(filenameDate);
+      //document.getElementById("IVTextInformationTime").textContent=filenameTime;
       wsLog(filenameTime);
+      //document.getElementById("IVTextInformationDim").textContent=filenameDimensions;
       wsLog(filenameDimensions);
+      //document.getElementById("IVTextInformationCam").textContent=filenameCamera;
       wsLog(filenameCamera);
     }
     if ( command == 'GIVE')
@@ -448,10 +608,41 @@ var WEBSOCKETS_SUBVERSION = "10";
       // Shows all defined Album Names.
       AlbumsList(content);
     }
+    if ( command == 'ALBJ')
+    {
+      // Print all used shortcuts and albumnames.
+      AlbumsList(content);
+    }
     if ( command == 'ALBS')
     {
       // Print all used shortcuts.
       wsLog('B<-S Shortcuts: ' + content);
+    }
+    if ( command == 'ASET')
+    {
+      // Print the global variable which define which album will be used with List* commands.
+      wsLog('B<-S Album set: ' + content);
+    }
+    if ( command == 'AGET')
+    {
+      // Print the global variable which define which album will be used with List* commands.
+      wsLog('B<-S Album get: ' + content);
+    }
+    if ( command == 'ALBC')
+    {
+      //
+      wsLog('B<-S Album changed or created: ' + content);
+      // Update UI:
+      HideAlbums();
+      wsAlbumsList();
+    }
+    if ( command == 'ALBD')
+    {
+      // Delete one Album
+      wsLog('B<-S Album deleted: ' + content);
+      // Update UI:
+      HideAlbums();
+      wsAlbumsList();
     }
     if ( command == 'SHOW')
     {
@@ -467,14 +658,3 @@ var WEBSOCKETS_SUBVERSION = "10";
     // [object event] --> The server was down.
     wsLog('ERROR: ' + msg);
   };
-
-  // Sending String:
-  // ws.send('kdk was here.' + '\n');
-  // Das Senden klappt hier noch nicht:
-  // "Failed to execute 'send' on 'WebSocket': Still in CONNECTING state."
-
-  // ///////////////////////////////
-  // Init Album things:
-
-  // TODO
-  // let albumShortcuts = Irgendein array
