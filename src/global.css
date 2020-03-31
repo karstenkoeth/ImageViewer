@@ -6,6 +6,10 @@
 /* 2018-05-22 0.11 kdk With debugoutputpar                                    */
 /* 2018-06-26 0.12 kdk With IValbums                                          */
 /* 2019-02-09 0.13 kdk Also adapted for koeth.cloud                           */
+/* 2019-03-11 0.14 kdk With input IVAlbumsCreate                              */
+/* 2019-05-05 0.15 kdk With adaption to Mosaic+                               */
+/* 2020-03-01 0.16 kdk IVtext changed from id to class                        */
+/* 2020-03-11 0.17 kdk IValbumsChar added and some formatting                 */
 
 /*
 #
@@ -43,17 +47,17 @@
 /* Flex Box Preparation ***************************************************** */
 
 section {
-  display:flex;
+  display: flex;
   flex-direction: row;
 }
 
-p         { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 12px; }
-h1        { font-family: sans-serif; font-weight:bold;                                                  }
-h2        { font-family: sans-serif; font-weight:bold;                                                  }
-h3        { font-family: sans-serif; font-weight:bold;                                                  }
-h4        { font-family: sans-serif; font-weight:bold;                                                  }
-#Uhr      { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 100px; }
-#debugoutput { font-family: monospace; font-size: 10px; }
+p            { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size:  12px; }
+h1           { font-family: sans-serif; font-weight:bold;                                                   }
+h2           { font-family: sans-serif; font-weight:bold;                                                   }
+h3           { font-family: sans-serif; font-weight:bold;                                                   }
+h4           { font-family: sans-serif; font-weight:bold;                                                   }
+#Uhr         { font-family: sans-serif; font-weight:bold; width: 100%; text-align:center; font-size: 100px; }
+#debugoutput { font-family: monospace;                                                    font-size:  10px; }
 
 /* unvisited link */
 a:link    { text-decoration: none; color: black; }
@@ -66,17 +70,17 @@ a:active  { text-decoration: none; color: black; }
 
 #IVlabel {
   font-family: 'Open Sans', sans-serif;
-  font-weight:bold;
+  font-weight: bold;
   width: 100%;
-  text-align:left;
+  text-align: left;
   font-size: 14px;
 }
 
-#IVtext {
+.IVtext {
   font-family: 'Open Sans', sans-serif;
-  font-weight:normal;
+  font-weight: normal;
   width: 100%;
-  text-align:left;
+  text-align: left;
   font-size: 14px;
 }
 
@@ -94,27 +98,32 @@ a:active  { text-decoration: none; color: black; }
   text-align: center;
 }
 
+.IVdocument {
+  margin: 0px;
+  background-color: rgb(137, 196, 244);
+}
+
 .IVheader {
   background-color: rgb(137, 196, 244);
   padding-top: 5px;
   padding-bottom: 5px;
-  margin:0px;
+  margin: 0px;
   padding: 10px;
   font-family: sans-serif;
-  font-weight:bold;
+  font-weight: bold;
   width: 100%;
-  text-align:center;
+  text-align: center;
   font-size: 16px;
 }
 
 .IVbody {
-  margin:10px;
+  margin: 10px;
 }
 
 .IValbums {
   background-color: rgb(65, 94, 116);
-  height:32px;
-  margin:0px;
+  height: 32px;
+  margin: 0px;
   padding-left: 10px;
   padding-right: 10px;
   width: 100%;
@@ -131,27 +140,54 @@ a:active  { text-decoration: none; color: black; }
   font-size: 10px;
   font-weight: normal;
   padding: 5px;
-  cursor:pointer;
+  cursor: pointer;
+}
+
+.IValbumsCreate {
+  background-color: rgb(212, 231, 246);
+  border-radius: 250px;
+  margin: 5px;
+  font-size: 20px;
+  font-weight: normal;
+  padding: 5px;
+  cursor: text;
+  border: none;
+  outline: none;
+}
+
+.IValbumsChar {
+  background-color: rgb(108, 155, 193);
+  border-radius: 250px;
+  margin: 5px;
+  width: 4em;
+  max-width: 4em;
+  font-size: 20px;
+  font-weight: bold;
+  color: rgb(212, 231, 246);
+  padding: 5px;
+  cursor: text;
+  border: none;
+  outline: none;
 }
 
 .IVnav {
   background-color: rgb(137, 196, 244);
   padding-top: 5px;
   padding-bottom: 5px;
-  margin:0px;
+  margin: 0px;
   padding: 10px;
   font-family: sans-serif;
-  font-weight:bold;
+  font-weight: bold;
   width: 100%;
-  text-align:center;
+  text-align: center;
   font-size: 16px;
 }
 
 .IVcode {
   font-family: 'Lucida Console', monospace;
-  font-weight:normal;
+  font-weight: normal;
   width: 100%;
-  text-align:left;
+  text-align: left;
   font-size: 12px;
   padding-bottom: 6px;
   padding-top: 6px;
@@ -179,8 +215,8 @@ a:active  { text-decoration: none; color: black; }
 
 .IValbumsOverview {
   background-color: rgb(65, 94, 116);
-  height:64px;
-  margin:0px;
+  height: 64px;
+  margin: 0px;
   padding-left: 10px;
   padding-right: 10px;
   width: 100%;
@@ -192,5 +228,35 @@ a:active  { text-decoration: none; color: black; }
 
 .impressum {
   font-size: 10px;
-  text-align:left;
+  text-align: left;
+}
+
+.flexy {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  /* background-color: red; */
+  background-color: rgb(65, 94, 116);
+}
+
+.conti {
+  /* background-color: orange; */
+  /* background-color:rgb(108, 155, 193); */
+  background-color: rgb(65, 94, 116);
+  margin: 0px;
+  width: 320px;
+  padding: 5px;
+  text-align: center;
+}
+
+.MosaicPlus {
+  color: #172b4d;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  letter-spacing: 0;
+  margin: 0px;
+  padding: 0px;
+  /* -webkit-font-smoothing: antialiased; */
 }

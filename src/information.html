@@ -7,10 +7,12 @@
   // Versions
   //
   // 2019-02-17 0.01 kdk Small changes, now with correct height.
+  // 2020-03-01 0.02 kdk With cache reload functionality
 
   var PROG_NAME = "ImageViewer Information";
   var PROG_CLASS = "ImageViewer";
-  var PROG_VERSION = "0.01";
+  var PROG_VERSION = "0.02";
+  var PROG_SUBVERSION = "03";
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -40,7 +42,7 @@
 
   <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="global.css?+PROG_VERSION+PROG_SUBVERSION">
     <title>ImageViewer - Information</title>
   </head>
 
@@ -58,15 +60,15 @@
     <div class="IVbody">
 
       <div class="IVdelimiter"></div>
-      <div    id="IVTextInformationDate">_</div>
+      <div class="IVtext"              id="IVTextInformationDate">_</div>
       <div class="IVdelimiter"></div>
-      <div    id="IVTextInformationTime">_</div>
+      <div class="IVtext"              id="IVTextInformationTime">_</div>
       <div class="IVdelimiter"></div>
-      <div    id="IVTextInformationDim">_</div>
+      <div class="IVtext"              id="IVTextInformationDim">_</div>
       <div class="IVdelimiter"></div>
-      <section>
-        Source: 
-        <div    id="IVTextInformationCam">_</div>
+      <section class="IVtext">
+        Source: &nbsp;
+        <div                           id="IVTextInformationCam">_</div>
       </section>
       <div class="IVdelimiter"></div>
 

@@ -19,10 +19,15 @@
   // 2019-01-22 0.18 kdk With basic ShowAlbums
   // 2019-02-17 0.19 kdk With normal key event handling and link zu information
   // 2019-02-25 0.20 kdk With always visible Albums
+  // 2019-03-11 0.21 kdk With input text
+  // 2020-02-27 0.22 kdk With first try to communicate between windows...
+  // 2020-03-01 0.23 kdk With more comments and cache reload functionality 
+  // 2020-03-02 0.24 kdk With more comments
+  // 2020-03-11 0.26 kdk IValbumsOverlayChar added
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.20";
-  var PROG_SUBVERSION = "04";
+  var PROG_VERSION = "0.26";
+  var PROG_SUBVERSION = "02";
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -52,62 +57,94 @@
 
   <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="global.css?+PROG_VERSION+PROG_SUBVERSION">
     <title>ImageViewer</title>
   </head>
 
   <body style="margin:0px">
-    <div class="IVheader">
+    <!-- -------------------------------------------------------------------------- -->
+    <div class="IVheader"> <!-- Header: First part with Links to "Sub" programs ... -->
       <section>
-        <div style="width:20%;height:20px;cursor:pointer" onclick="window.open('settings.html','Settings',
-              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')">
+        <div  style="width:20%;height:20px;cursor:pointer" 
+              onclick="window.open('settings.html?'+ PROG_VERSION + PROG_SUBVERSION,
+              'Settings',
+              'width=500,height=350,location=no,menubar=no,status=no,toolbar=no,titlebar=no')">
+          <!-- TODO: At the moment, hard coded values. -->                              <!-- Prio 6 -->
           Settings
         </div>
         <div style="width:20%;height:20px;">
+          <!-- TODO: Not yet implemented.                                           -->
+          <!-- Press this button:                                                   -->
+          <!--  - Per Websocket, the command will be transmitted to start a new     --> <!-- Prio 7 -->
+          <!--    Scan of the filesystem.                                           -->
+          <!--  - A popup appears show the actual status of the Scan.               -->
           Scan
         </div>
-        <div style="width:20%;height:20px;cursor:pointer" onclick="window.open('information.html','Information',
-              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')">
+        <div  style="width:20%;height:20px;cursor:pointer" 
+              onclick="hdrInformation()">
           <!-- Category: xxx -->
           Information
         </div>
         <div style="width:20%;height:20px;">
+          <!-- TODO: Not yet implemented.                                           -->
+          <!--       Shows one Album in a new Window with IVNumberTimePerImage.     -->
+          <!--          In Fullscreen:                                              -->
+          <!--            - On Macbook in WZ                                        --> <!-- Prio 5 -->
+          <!--            - On MacbookPro                                           -->
+          <!--            - On iPad                                                 --> <!-- Prio 3 -->
+          <!--            - On iPhone SE                                            -->
           Slideshow
-          <!-- Shows one Album -->
         </div>
         <div style="width:20%;height:20px;">
+          <!-- TODO: Not yet implemented.                                           -->
+          <!--  - Per Websocket, the command export will be transmitted to export   --> <!-- Prio 1 -->
+          <!--    the special export album to an USB stick in Full Resolution.      --> 
+          <!--  - In next version, the export could be transferred to a Raspi       --> <!-- Prio 4 -->
+          <!--    somewhere in the local network.                                   -->
+          <!--  - During the export, the status of the export is shown on a new     --> <!-- Prio 2 -->
+          <!--    window.                                                           -->
           Export
         </div>
       </section>
     </div>
 
-    <div class="IVbody">
+    <!-- -------------------------------------------------------------------------- -->
+    <div class="IVbody"> <!-- The picture(s) is shown.                              -->
       <div id="IVpool">
         <div style="width:30%" id="IVimage">
           <!-- See actions.ts for the next two functions: -->
-          <!-- div style="width:30%" id="IVimage" onmouseover="IVShowAlbums(this)" onmouseout="IVUnShowAlbums(this)" -->
+          <!-- div style="width:30%" id="IVimage" onmouseover="IVShowAlbums(this)" 
+                   onmouseout="IVUnShowAlbums(this)" -->
+          <!-- TODO This should be the picture 'n-1'.     -->
           <img src="./img/schnee.png"/>
         </div>
         <div style="width:30%" id="IVimage">
-        <!-- div style="width:30%" id="IVimage" onkeydown="IVInterpretKey(event)" -->
+          <!-- div style="width:30%" id="IVimage" onkeydown="IVInterpretKey(event)" -->
+          <!-- This is the image 'n' - the current image. -->
           <img id="IVImageMid" src="./img/default.png"/>
         </div>
         <div style="width:30%" id="IVimage">
-        <!-- div style="width:30%" id="IVimage" onmouseover="wsImageVers()" -->
+          <!-- div style="width:30%" id="IVimage" onmouseover="wsImageVers()" -->
+          <!-- TODO This should be the picture 'n+1'.     -->
           <img src="./img/wolken.png"/>
         </div>
       </div>
     </div>
 
-    <div class="IValbums">
+    <!-- -------------------------------------------------------------------------- -->
+    <div class="IValbums"> <!-- All album names, the current picture is member of,  -->
+                           <!-- are shown.                                          --> <!-- DONE -->
       <section id="IValbumsRoot">
+        <!-- This content is filled inside websockets.ts : IVAlbumsClick()  -->
         <!-- div class="IValbumsDiv" id="IValbumsDiv0" -->
-          <!-- p class="IValbumsText" onclick="IVAlbumsClick("Mein neuer Text")" >+</p -->
+          <!-- p class="IValbumsText" 
+                 onclick="IVAlbumsClick("Mein neuer Text")" >+</p -->
         <!-- /div -->
       </section>
     </div>
 
-    <div class="IVnav">
+    <!-- -------------------------------------------------------------------------- -->
+    <div class="IVnav"> <!-- Goto a specific picture. Previous Next ...-->
       <section>
         <!-- ######## Old version with: onmouseover="wsImagePos1()" -->
         <div style="width:20%;height:20px;cursor:pointer"
@@ -118,8 +155,10 @@
              onclick="wsImagePrev()">
           &#8592;
         </div>
+        <!-- TODO Instead of always goto picture number 42: Show a dialog to enter  -->
+        <!--      a number and go to this picture number.                           -->
         <div style="width:20%;height:20px;cursor:pointer"
-             onclick="wsImageGoto(42)"
+             onclick="wsImageGoto(42)"   
              id="IVListPos">
           =
         </div>
@@ -134,13 +173,22 @@
       </section>
     </div>
 
-    <div class="IValbumsOverview">
+    <!-- -------------------------------------------------------------------------- -->
+    <div class="IValbumsOverview"> <!-- Show all available Albums.-->
       <section id="IValbumsShow">
+        <!-- This content is filled inside websockets.ts : ShowAlbums()  -->
         <!-- div class="IValbumsDiv" id="IValbumsDiv0" -->
-          <!-- p class="IValbumsText" onclick="IVAlbumsClick("Mein neuer Text")" >+</p -->
+          <!-- p class="IValbumsText" 
+                 onclick="IVAlbumsClick("Mein neuer Text")" >+</p -->
         <!-- /div -->
         <div class="IValbumsDiv">
-          <p class="IValbumsText" title="+" onclick="IVAlbumsCreate('X;X-Men')">+</p>
+          <!-- In websockets.ts : IVAlbumsCreateGUI() we switch on the Element to   -->
+          <!-- create more albums.                                                  -->
+          <p class="IValbumsText" title="+" onclick="IVAlbumsCreateGUI()">+</p>         <!-- TODO First -->    
+        </div>
+        <div class="IValbumsDiv" id="IValbumsOverlay" style="display:none">
+          <input class="IValbumsChar" id="IValbumsOverlayChar" type="text" value="X"/>
+          <input class="IValbumsCreate" id="IValbumsOverlayContent" type="text" value="Export"/>
         </div>
       </section>
     </div>
@@ -169,10 +217,10 @@
 
   </body>
   <!-- script src="actions.js" /script -->
-  <script src="websockets.js?"+ PROG_VERSION + PROG_SUBVERSION></script>
+  <script src="websockets.js?+PROG_VERSION+PROG_SUBVERSION"></script>
   <script>
     var s = document.getElementById("debugoutputpar");
-    s.innerHTML = s.innerHTML + PROG_NAME + " " + PROG_VERSION;
+    s.innerHTML = s.innerHTML + PROG_NAME + " " + PROG_VERSION + "-" + PROG_SUBVERSION;
 
   </script>
 </html>

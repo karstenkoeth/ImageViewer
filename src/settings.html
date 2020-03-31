@@ -8,10 +8,12 @@
   //
   // 2018-05-22 0.10 kdk With license text and version information
   // 2019-02-17 0.11 kdk Small changes, now with correct height.
+  // 2020-03-01 0.12 kdk With cache reload functionality
 
   var PROG_NAME = "ImageViewer Settings";
   var PROG_CLASS = "ImageViewer";
-  var PROG_VERSION = "0.11";
+  var PROG_VERSION = "0.12";
+  var PROG_SUBVERSION = "04"
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -41,11 +43,11 @@
 
   <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="global.css?+PROG_VERSION+PROG_SUBVERSION">
     <title>ImageViewer - Settings</title>
   </head>
 
-  <body style="width:500px; height:280px; margin:0px">
+  <body style="width:500px; height:350px; margin:0px">
 
     <!-- Header mit BACK Button -->
     <div  class="IVheader">
@@ -75,7 +77,7 @@
         <div    id="IVlabel" >Slide Show, time per Image</div>
         <section>
           <input  id="IVNumberTimePerImage" type="number" class="IVinputnumber" style="width: 40px; margin-right: 5px;"></input>
-          <div    id="IVtext" style="padding-top: 5px;">Seconds</div>
+          <div    class="IVtext" style="padding-top: 5px;">Seconds</div>
         </section>
     </div>
 

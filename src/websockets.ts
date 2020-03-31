@@ -3,6 +3,9 @@
 // Run with tsc, maybe with options: --pretty --removeComments --watch
 // or see tsconfig.json file
 
+// Sometimes in the future, it could be edited with:
+// https://stackblitz.com/github/karstenkoeth/ImageViewer/
+
 // ///////////////////////////////////////////////////////////////////////////
 //
 // Versions
@@ -24,9 +27,15 @@
 // 2019-02-17 0.18 More key handling
 // 2019-02-23 0.19 Can shut down the server ;-)
 // 2019-02-25 0.20 With AlbumsList as standard
+// 2019-03-11 0.21 With input
+// 2020-02-27 0.22 With information in information window
+// 2020-03-01 0.23 With parameters behind html page to override the browser cache.
+// 2020-03-02 0.24 With more comments
+// 2020-03-06 0.25 With InputField Handling
+// 2020-03-11 0.26 InputField and InputChar
 
-var WEBSOCKETS_VERSION = "0.20";
-var WEBSOCKETS_SUBVERSION = "04";
+var WEBSOCKETS_VERSION = "0.26";
+var WEBSOCKETS_SUBVERSION = "02";
 
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -119,6 +128,9 @@ var WEBSOCKETS_SUBVERSION = "04";
         // Get AlbumName:
         ws.send('ALBU='+stmp)
         //wsLog('B->S ALBU')
+        // With the command above, we trigger the server to send back an album 
+        // name. This name will received in the main event handler and 
+        // IVAlbumsClick is called.
       }
       pos++;
     }
@@ -132,6 +144,7 @@ var WEBSOCKETS_SUBVERSION = "04";
 
   // ///////////////////////////////////////////////
 
+  // Delete all shown album names in the GUI IValbums section.
   function IVAlbumsClean()
   {
     let child;
@@ -147,10 +160,13 @@ var WEBSOCKETS_SUBVERSION = "04";
     }
   }
 
+  // Appends an album name in the GUI IValbums section.
   function IVAlbumsClick(obj)
   {
     //wsLog('B<-S AlbumName: '+obj);
     //wsLog("B    AlbumsClick: Create new album element in DOM.");
+    // IValbumsRoot - node  - nodenode - textnote
+    // <section>    - <DIV> - <P>      - text
     let node = document.createElement("DIV");
     node.className = "IValbumsDiv";
     node.id = "IValbumsDiv0";
@@ -163,12 +179,30 @@ var WEBSOCKETS_SUBVERSION = "04";
     albumcount++;
   }
 
+  // ///////////////////////////////////////////////
+
+  // GUI IValbumsOverview section.
+  function IVAlbumsCreateGUI()
+  {
+    // Switch ON the input field:
+    document.getElementById("IValbumsOverlay").style.display="block";
+    inputfieldchar = "";
+    inputfieldcontent = "";
+    // Switch OFF all normal keyboard handling: We need normal Input field handling!
+    ininputchar = true;
+    ininputfield = false;
+  }
+
   function IVAlbumsCreate(obj)
   {
     ws.send('ALBC='+obj);
     wsLog('B->S Create or change Album '+obj);
   }
 
+  // ///////////////////////////////////////////////
+
+  // Create the List with all available albums in GUI IValbumsShow section
+  // <section> - <DIV> - <P> - text
   function ShowAlbums(obj)
   {
     let divnode = document.createElement("DIV");
@@ -281,6 +315,16 @@ var WEBSOCKETS_SUBVERSION = "04";
   }
 
   // ///////////////////////////////////////////////
+  // Header Navigation
+
+  function hdrInformation()
+  {
+    // Open new window:
+    windowInformation=window.open('information.html?' + WEBSOCKETS_VERSION + WEBSOCKETS_SUBVERSION,'Information',
+              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')
+  }
+
+  // ///////////////////////////////////////////////
   // Navigation
 
   function wsImagePos1()
@@ -367,11 +411,13 @@ var WEBSOCKETS_SUBVERSION = "04";
 
         if ( myKey == 'a' )
         {
+          // Send command: "Print all albumnames"
           ws.send('ALBA');
           wsLog('B->S ALBA');
         }
         if ( myKey == 'd' )
         {
+          // Switch Debug output on or off - toggle key.
           if ( logging == true)
           {
             logging = false;
@@ -385,6 +431,7 @@ var WEBSOCKETS_SUBVERSION = "04";
         }
         if ( myKey == 'e' )
         {
+          // Export actual file into export folder.
           ws.send('EXPO');
           wsLog('B->S EXPO Export the actual file...');
         }
@@ -403,6 +450,7 @@ var WEBSOCKETS_SUBVERSION = "04";
         }
         if ( myKey == 'h' )
         {
+          // Hide albums in GUI in section IValbumsShow 
           HideAlbums();
           wsLog('HideAlbums');
         }
@@ -414,6 +462,7 @@ var WEBSOCKETS_SUBVERSION = "04";
         }
         if ( myKey == 'j' )
         {
+          // Show all albums in GUI in section IValbumsShow 
           wsAlbumsList();
         }
         if ( myKey == 'q' )
@@ -436,7 +485,7 @@ var WEBSOCKETS_SUBVERSION = "04";
         // END Control Level ///////////////////////////////////////////////////
       }
 
-      if ( ! event.shiftKey && ! event.ctrlKey && ! event.altKey && ! event.metaKey )
+      if ( ! event.shiftKey && ! event.ctrlKey && ! event.altKey && ! event.metaKey && ! ininputfield )
       {
         if (  ( myKey == 'ArrowUp' ) || ( myKey == 'ArrowDown' ) || ( myKey == 'ArrowLeft' ) || ( myKey == 'ArrowRight' )  )
         {
@@ -466,6 +515,9 @@ var WEBSOCKETS_SUBVERSION = "04";
           // BEGIN Album Level /////////////////////////////////////////////////
           //wsLog('B    Album Level');
 
+          // TODO
+          // If '+' then IVAlbumsCreateGUI()
+
           // The Server accepts only uppercase letters:
           let myShortcut = myKey.toUpperCase();
           //wsLog('B    ' + myShortcut + ' ' + albumshortcuts);
@@ -488,6 +540,84 @@ var WEBSOCKETS_SUBVERSION = "04";
         }
 
       }
+
+      // BEGIN Input Field ///////////////////////////////////////////////////
+      if ( ! event.ctrlKey && ! event.altKey && ! event.metaKey && ininputfield )
+      {
+        // We are in the input field and stop recording the input if we see an "Enter" or "Escape" Key:
+        if ( ( myKey == 'Esc' ) || ( myKey == 'Escape' ) )
+        {
+          // Forget the string:
+          inputfieldchar = "";
+          inputfieldcontent = "";
+          ininputchar = false;
+          ininputfield = false;
+          document.getElementById("IValbumsOverlay").style.display="none";
+        }
+        if ( myKey == 'Enter' )
+        {
+          // End of string. Send string:
+          IVAlbumsCreate(inputfieldchar + ';' + inputfieldcontent);
+          // Clean strings:
+          inputfieldchar = "";
+          inputfieldcontent = "";
+          ininputchar = false;
+          ininputfield = false;
+          document.getElementById("IValbumsOverlay").style.display="none";
+        }
+        if (  !( myKey == 'Esc' ) && !( myKey == 'Escape' ) && !( myKey == 'Enter' )  )
+        {
+          // Not at the end of the string, therefore append the string:
+          if (  !( myKey == 'Shift' )  )
+          {
+            inputfieldcontent = inputfieldcontent + myKey ;
+            document.getElementById("IValbumsOverlayContent").innerText = inputfieldcontent;
+            wsLog('AlbumName: '+inputfieldcontent);
+          }
+        }
+
+      }
+      // END Input Field /////////////////////////////////////////////////////
+
+      // BEGIN Input Char //////////////////////////////////////////////////////
+      if ( ! event.ctrlKey && ! event.altKey && ! event.metaKey && ininputchar )
+      {
+        // We are in the input field and stop recording the input if we see an "Enter" or "Escape" Key:
+        if ( ( myKey == 'Esc' ) || ( myKey == 'Escape' ) )
+        {
+          // Forget the strings:
+          inputfieldchar = "";
+          inputfieldcontent = "";
+          ininputchar = false;
+          ininputfield = false;
+          document.getElementById("IValbumsOverlay").style.display="none";
+        }
+        if ( myKey == 'Enter' )
+        {
+          // End of char. Store char
+          // Clean string:
+          // We are happy with the inputchar and switch to the input field for the name: 
+          ininputchar = false;
+          ininputfield = true;
+        }
+        if (  !( myKey == 'Esc' ) && !( myKey == 'Escape' ) && !( myKey == 'Enter' )  )
+        {
+          // Not at the end of the string, therefore append the string:
+          if (  !( myKey == 'Shift' )  )
+          {
+            inputfieldchar = myKey.toUpperCase() ;
+            document.getElementById("IValbumsOverlayChar").innerText = inputfieldchar;
+            wsLog('AlbumShortcut: '+inputfieldchar);
+            // End of char. Store char
+            // Clean string:
+            // We are happy with the inputchar and switch to the input field for the name: 
+            ininputchar = false;
+            ininputfield = true;
+          }
+        }
+
+      }
+      // END Input Char ////////////////////////////////////////////////////////
 
   }
 
@@ -518,7 +648,12 @@ var WEBSOCKETS_SUBVERSION = "04";
   let filename : string = "";
   let connected : boolean = false;
   let logging : boolean = false;
+  let ininputchar : boolean = false;
+  let ininputfield : boolean = false;
+  let inputfieldchar : string = "";
+  let inputfieldcontent : string = "";
   var loggingtmp = document.getElementById("IVProgrammersPoint").style.display;
+  var windowInformation = null;
 
   // Register Keydown events:
   document.addEventListener("keydown", IVInterpretKey);
@@ -573,16 +708,17 @@ var WEBSOCKETS_SUBVERSION = "04";
       let sstr = filename.split(".");
       let filenameDate : string = sstr[0];
       let filenameTime : string = sstr[1];
+      let filenameTimeNice : string = filenameTime.replace(/_/gi,":"); // replace '_' with ':' for all occurances.
       let filenameDimensions : string = sstr[3];
       let filenameCamera : string = sstr[4];
-      // TODO: Wie komme ich an die Informationen vom Kinder Fenster?
-      //document.getElementById("IVTextInformationDate").textContent=filenameDate;
+      // Show Information in Information Window and on Programmers Corner:
+      windowInformation.document.getElementById("IVTextInformationDate").textContent=filenameDate;
       wsLog(filenameDate);
-      //document.getElementById("IVTextInformationTime").textContent=filenameTime;
-      wsLog(filenameTime);
-      //document.getElementById("IVTextInformationDim").textContent=filenameDimensions;
+      windowInformation.document.getElementById("IVTextInformationTime").textContent=filenameTimeNice;
+      wsLog(filenameTime + '   ' + filenameTimeNice);
+      windowInformation.document.getElementById("IVTextInformationDim").textContent=filenameDimensions;
       wsLog(filenameDimensions);
-      //document.getElementById("IVTextInformationCam").textContent=filenameCamera;
+      windowInformation.document.getElementById("IVTextInformationCam").textContent=filenameCamera;
       wsLog(filenameCamera);
     }
     if ( command == 'GIVE')

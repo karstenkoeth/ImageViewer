@@ -35,9 +35,17 @@
 
 # #########################################
 #
+# Links
+#
+# See html_updater_server.sh
+
+# #########################################
+#
 # Constants
 #
 
+PROJECT="/Users/koeth/programmieren/ImageViewer/git/ImageViewer"
+SOURCE="/Users/koeth/programmieren/ImageViewer/git/ImageViewer/src"
 TARGET="/Users/koeth/Sites/ImageViewer"
 SERVER="/Users/koeth/bin"
 
@@ -54,6 +62,7 @@ echo "Starting ..."
 echo "Transcode ..."
 #tsc actions.ts
 tsc websockets.ts
+tsc html_updater_client.ts
 #tsc renderer.ts
 
 echo "Prepare..."
@@ -78,6 +87,7 @@ cp information.html "$TARGET"
 # Actions
 #cp actions.js "$TARGET"
 cp websockets.js "$TARGET"
+cp html_updater_client.js "$TARGET"
 #cp renderer.js "$TARGET"
 
 # Content
@@ -99,6 +109,7 @@ cp image_viewer_common_vars.bash "$SERVER"
 cp image_viewer_common_func.bash "$SERVER"
 cp html_collect_pictures.sh "$SERVER"
 cp exif2html.sh "$SERVER"
+cp html_updater_server.sh "$SERVER" 
 
 echo "Post install ..."
 chmod u+x "$SERVER/image_viewer_server.sh"
@@ -106,12 +117,14 @@ chmod u+x "$SERVER/image_viewer_common_vars.bash"
 chmod u+x "$SERVER/image_viewer_common_func.bash"
 chmod u+x "$SERVER/html_collect_pictures.sh"
 chmod u+x "$SERVER/exif2html.sh"
+chmod u+x "$SERVER/html_updater_server.sh"
 
 # #########################################
 
 echo "Done."
 echo ""
 echo "Run with: websocketd --port=8080 ./image_viewer_server.sh"
+echo "Run with: websocketd --port=8081 ./html_updater_server.sh"
 echo ""
 MYMASCHINE=$(ifconfig | grep "inet " | grep "broadcast" | cut -f 2 -d " ")
 echo "You will run on $MYMASCHINE"
