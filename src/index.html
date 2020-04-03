@@ -24,10 +24,11 @@
   // 2020-03-01 0.23 kdk With more comments and cache reload functionality 
   // 2020-03-02 0.24 kdk With more comments
   // 2020-03-11 0.26 kdk IValbumsOverlayChar added
+  // 2020-04-03 0.27 kdk Programmers Point to click
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.26";
-  var PROG_SUBVERSION = "02";
+  var PROG_VERSION = "0.27";
+  var PROG_SUBVERSION = "04";
 
   // ///////////////////////////////////////////////////////////////////////////
   //
@@ -81,7 +82,9 @@
           Scan
         </div>
         <div  style="width:20%;height:20px;cursor:pointer" 
-              onclick="hdrInformation()">
+              onclick="window.open('information.html?'+ PROG_VERSION + PROG_SUBVERSION,
+              'Information',
+              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')">
           <!-- Category: xxx -->
           Information
         </div>
@@ -184,7 +187,10 @@
         <div class="IValbumsDiv">
           <!-- In websockets.ts : IVAlbumsCreateGUI() we switch on the Element to   -->
           <!-- create more albums.                                                  -->
-          <p class="IValbumsText" title="+" onclick="IVAlbumsCreateGUI()">+</p>         <!-- TODO First -->    
+          <p class="IValbumsText" style="cursor: pointer;"
+            title="Create new album" onclick="IVAlbumsCreateGUI()">
+            +
+          </p>                                                                          <!-- TODO First -->    
         </div>
         <div class="IValbumsDiv" id="IValbumsOverlay" style="display:none">
           <input class="IValbumsChar" id="IValbumsOverlayChar" type="text" value="X"/>
@@ -198,7 +204,8 @@
     <div id="IVProgrammersPoint" style="margin:8px;">
     <!-- div id="IVProgrammersPoint" style="margin:8px; display: none;" --> <!-- If having none from the beginning, loggingtmp has useless value. -->
 
-      <h1>
+      <h1 style="cursor: pointer;"
+          onclick="toggleDebugOutput()">
         Programmer's Point
       </h1>
 

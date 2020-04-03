@@ -33,8 +33,9 @@
 // 2020-03-02 0.24 With more comments
 // 2020-03-06 0.25 With InputField Handling
 // 2020-03-11 0.26 InputField and InputChar
+// 2020-04-03 0.27 toggleDebugOutput
 
-var WEBSOCKETS_VERSION = "0.26";
+var WEBSOCKETS_VERSION = "0.27";
 var WEBSOCKETS_SUBVERSION = "02";
 
 
@@ -316,13 +317,13 @@ var WEBSOCKETS_SUBVERSION = "02";
 
   // ///////////////////////////////////////////////
   // Header Navigation
-
-  function hdrInformation()
-  {
+  //
+  //function hdrInformation()
+  //{
     // Open new window:
-    windowInformation=window.open('information.html?' + WEBSOCKETS_VERSION + WEBSOCKETS_SUBVERSION,'Information',
-              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')
-  }
+  //  windowInformation=window.open('information.html?' + WEBSOCKETS_VERSION + WEBSOCKETS_SUBVERSION,'Information',
+  //            'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')
+  //}
 
   // ///////////////////////////////////////////////
   // Navigation
@@ -384,6 +385,23 @@ var WEBSOCKETS_SUBVERSION = "02";
   }
 
   // ///////////////////////////////////////////////
+  // Toggle Debug Output
+  function toggleDebugOutput()
+  {
+    // Switch Debug output on or off - toggle key.
+    if ( logging == true)
+    {
+      logging = false;
+      document.getElementById("IVProgrammersPoint").style.display = "none";
+    }
+    else
+    {
+      logging = true;
+      document.getElementById("IVProgrammersPoint").style.display = loggingtmp;
+    }
+  }
+
+  // ///////////////////////////////////////////////
   // Keyboard interaction
   //
   // https://www.w3schools.com/jsref/obj_keyboardevent.asp
@@ -417,17 +435,7 @@ var WEBSOCKETS_SUBVERSION = "02";
         }
         if ( myKey == 'd' )
         {
-          // Switch Debug output on or off - toggle key.
-          if ( logging == true)
-          {
-            logging = false;
-            document.getElementById("IVProgrammersPoint").style.display = "none";
-          }
-          else
-          {
-            logging = true;
-            document.getElementById("IVProgrammersPoint").style.display = loggingtmp;
-          }
+          toggleDebugOutput();
         }
         if ( myKey == 'e' )
         {
