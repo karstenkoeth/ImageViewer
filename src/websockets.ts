@@ -34,9 +34,10 @@
 // 2020-03-06 0.25 With InputField Handling
 // 2020-03-11 0.26 InputField and InputChar
 // 2020-04-03 0.27 toggleDebugOutput
+// 2020-05-20 0.28 Support BackSpace in Give Name
 
-var WEBSOCKETS_VERSION = "0.27";
-var WEBSOCKETS_SUBVERSION = "02";
+var WEBSOCKETS_VERSION = "0.28";
+var WEBSOCKETS_SUBVERSION = "03";
 
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -187,10 +188,13 @@ var WEBSOCKETS_SUBVERSION = "02";
   {
     // Switch ON the input field:
     document.getElementById("IValbumsOverlay").style.display="block";
+    document.getElementById("IValbumsOverlayChar").innerText ="";
+    document.getElementById("IValbumsOverlayContent").innerText ="";
     inputfieldchar = "";
     inputfieldcontent = "";
     // Switch OFF all normal keyboard handling: We need normal Input field handling!
     ininputchar = true;
+      document.getElementById("IValbumsOverlayChar").focus();
     ininputfield = false;
   }
 
@@ -493,9 +497,14 @@ var WEBSOCKETS_SUBVERSION = "02";
         // END Control Level ///////////////////////////////////////////////////
       }
 
-      if ( ! event.shiftKey && ! event.ctrlKey && ! event.altKey && ! event.metaKey && ! ininputfield )
+      if ( ! event.shiftKey && ! event.ctrlKey && ! event.altKey && ! event.metaKey && ! ininputchar && ! ininputfield )
       {
-        if (  ( myKey == 'ArrowUp' ) || ( myKey == 'ArrowDown' ) || ( myKey == 'ArrowLeft' ) || ( myKey == 'ArrowRight' )  )
+        if (  ( myKey == 'ArrowUp' ) || 
+              ( myKey == 'ArrowDown' ) || 
+              ( myKey == 'ArrowLeft' ) || 
+              ( myKey == 'ArrowRight' )  ||
+              ( myKey == '+')
+            )
         {
           // BEGIN Arrow Level /////////////////////////////////////////////////
           if ( myKey == 'ArrowUp' )
@@ -519,12 +528,16 @@ var WEBSOCKETS_SUBVERSION = "02";
             //wsLog('RIGHT');
           }
           // END Arrow Level ///////////////////////////////////////////////////
+
+          // BEGIN Change Level ////////////////////////////////////////////////
+          if ( myKey == '+' )
+          {
+            IVAlbumsCreateGUI();
+          }
+          // END Change Level //////////////////////////////////////////////////
         } else {
           // BEGIN Album Level /////////////////////////////////////////////////
           //wsLog('B    Album Level');
-
-          // TODO
-          // If '+' then IVAlbumsCreateGUI()
 
           // The Server accepts only uppercase letters:
           let myShortcut = myKey.toUpperCase();
@@ -573,7 +586,20 @@ var WEBSOCKETS_SUBVERSION = "02";
           ininputfield = false;
           document.getElementById("IValbumsOverlay").style.display="none";
         }
-        if (  !( myKey == 'Esc' ) && !( myKey == 'Escape' ) && !( myKey == 'Enter' )  )
+        if ( myKey == 'Backspace' )
+        {
+          // Delete latest char, if not empty:
+          if ( !(inputfieldcontent == '' )  )
+          {
+            inputfieldcontent = inputfieldcontent.slice(0,-1);
+            document.getElementById("IValbumsOverlayContent").innerText = inputfieldcontent;
+            wsLog('AlbumName: '+inputfieldcontent);
+          }
+        }
+        if (  !( myKey == 'Esc' ) && !( myKey == 'Escape' ) && 
+              !( myKey == 'Enter' ) && 
+              !( myKey == 'Backspace') && 
+              !( myKey == '+')  )
         {
           // Not at the end of the string, therefore append the string:
           if (  !( myKey == 'Shift' )  )
@@ -608,7 +634,9 @@ var WEBSOCKETS_SUBVERSION = "02";
           ininputchar = false;
           ininputfield = true;
         }
-        if (  !( myKey == 'Esc' ) && !( myKey == 'Escape' ) && !( myKey == 'Enter' )  )
+        if (  !( myKey == 'Esc' ) && !( myKey == 'Escape' ) && 
+              !( myKey == 'Enter') && 
+              !( myKey == '+')  )
         {
           // Not at the end of the string, therefore append the string:
           if (  !( myKey == 'Shift' )  )
@@ -621,6 +649,7 @@ var WEBSOCKETS_SUBVERSION = "02";
             // We are happy with the inputchar and switch to the input field for the name: 
             ininputchar = false;
             ininputfield = true;
+              document.getElementById("IValbumsOverlayContent").focus();
           }
         }
 
