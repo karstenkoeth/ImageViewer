@@ -35,9 +35,10 @@
 // 2020-03-11 0.26 InputField and InputChar
 // 2020-04-03 0.27 toggleDebugOutput
 // 2020-05-20 0.28 Support BackSpace in Give Name
+// 2020-10-31 0.29 event.preventDefault() added.
 
-var WEBSOCKETS_VERSION = "0.28";
-var WEBSOCKETS_SUBVERSION = "03";
+var WEBSOCKETS_VERSION = "0.29";
+var WEBSOCKETS_SUBVERSION = "02";
 
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -420,6 +421,12 @@ var WEBSOCKETS_SUBVERSION = "03";
 
   function IVInterpretKey(event)
   {
+    // Tip from https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
+    if (event.defaultPrevented) 
+    {
+      return; // Do nothing if the event was already processed
+    }
+
     let myKey = event.key;
 
     // if ( myKey == 'Control') It is only CTRL key without other normal keyes pressed.
@@ -546,11 +553,11 @@ var WEBSOCKETS_SUBVERSION = "03";
           {
             // Not found --> Include it in album:
             ws.send('AINC='+myShortcut);
-            //wsLog('B->S AINC');
+            wsLog('B->S AINC');
           } else {
             // It's in, so I will remove the image from album:
             ws.send('AEXC='+myShortcut);
-            //wsLog('B->S AEXC');
+            wsLog('B->S AEXC');
           }
           // Update view:
           IVAlbumsClean();
@@ -656,6 +663,9 @@ var WEBSOCKETS_SUBVERSION = "03";
       }
       // END Input Char ////////////////////////////////////////////////////////
 
+    // Tip from https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
+    // Cancel the default action to avoid it being handled twice
+    event.preventDefault();
   }
 
   // ///////////////////////////////////////////////////////////////////////////
