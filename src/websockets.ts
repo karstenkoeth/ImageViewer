@@ -36,8 +36,10 @@
 // 2020-04-03 0.27 toggleDebugOutput
 // 2020-05-20 0.28 Support BackSpace in Give Name
 // 2020-10-31 0.29 event.preventDefault() added.
+// 2020-11-04 0.30 Input optimized
+// 2020-11-08 0.31 Export a little bit more
 
-var WEBSOCKETS_VERSION = "0.29";
+var WEBSOCKETS_VERSION = "0.31";
 var WEBSOCKETS_SUBVERSION = "02";
 
 
@@ -96,6 +98,23 @@ var WEBSOCKETS_SUBVERSION = "02";
     ws.send('VERS');
     wsLog('B->S VERS');
     wsLog('websockets ' + WEBSOCKETS_VERSION + '-' + WEBSOCKETS_SUBVERSION)
+  }
+
+  // ///////////////////////////////////////////////
+
+  function wsImageExport()
+  {
+    // Export actual file into export folder.
+    ws.send('EXPO');
+    wsLog('B->S EXPO Export the actual file...');
+  }
+
+  function wsImageSetPrev()
+  {
+    let tmpimgact = document.getElementById('IVImageMid');
+    let tmps = tmpimgact.getAttribute('src');
+    let tmpimgprev = document.getElementById('IVImagePrev');
+    tmpimgprev.setAttribute('src',tmps);
   }
 
   // ///////////////////////////////////////////////
@@ -189,8 +208,8 @@ var WEBSOCKETS_SUBVERSION = "02";
   {
     // Switch ON the input field:
     document.getElementById("IValbumsOverlay").style.display="block";
-    document.getElementById("IValbumsOverlayChar").innerText ="";
-    document.getElementById("IValbumsOverlayContent").innerText ="";
+    document.getElementById("IValbumsOverlayChar").innerText ="?";
+    document.getElementById("IValbumsOverlayContent").innerText ="Name?";
     inputfieldchar = "";
     inputfieldcontent = "";
     // Switch OFF all normal keyboard handling: We need normal Input field handling!
@@ -451,8 +470,7 @@ var WEBSOCKETS_SUBVERSION = "02";
         if ( myKey == 'e' )
         {
           // Export actual file into export folder.
-          ws.send('EXPO');
-          wsLog('B->S EXPO Export the actual file...');
+          wsImageExport();
         }
         if ( myKey == 'g' )
         {

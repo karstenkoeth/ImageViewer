@@ -10,6 +10,8 @@
 /* 2019-05-05 0.15 kdk With adaption to Mosaic+                               */
 /* 2020-03-01 0.16 kdk IVtext changed from id to class                        */
 /* 2020-03-11 0.17 kdk IValbumsChar added and some formatting                 */
+/* 2020-11-04 0.18 kdk IValbumsChar changed                                   */
+/* 2020-11-08 0.31 kdk IVImage changed from id to class                       */
 
 /*
 #
@@ -91,7 +93,7 @@ a:active  { text-decoration: none; color: black; }
   text-align: center;
 }
 
-#IVimage {
+.IVimage {
   width: 320px;
   height: 320px;
   padding: 20px;
@@ -147,7 +149,7 @@ a:active  { text-decoration: none; color: black; }
   background-color: rgb(212, 231, 246);
   border-radius: 250px;
   margin: 5px;
-  font-size: 20px;
+  font-size: 10px;
   font-weight: normal;
   padding: 5px;
   cursor: text;
@@ -157,11 +159,11 @@ a:active  { text-decoration: none; color: black; }
 
 .IValbumsChar {
   background-color: rgb(108, 155, 193);
-  border-radius: 250px;
+  border-radius: 25px;
   margin: 5px;
-  width: 4em;
+  width: 2em;
   max-width: 4em;
-  font-size: 20px;
+  font-size: 10px;
   font-weight: bold;
   color: rgb(212, 231, 246);
   padding: 5px;

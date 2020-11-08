@@ -27,9 +27,11 @@
   // 2020-04-03 0.27 kdk Programmers Point to click
   // 2020-05-20 0.28 kdk Backspace
   // 2020-10-31 0.29 kdk Key event handling optimized
+  // 2020-11-04 0.30 kdk Input optimized.
+  // 2020-11-08 0.31 kdk 
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.29";
+  var PROG_VERSION = "0.31";
   var PROG_SUBVERSION = "02";
 
   // ///////////////////////////////////////////////////////////////////////////
@@ -108,7 +110,7 @@
         </div>
         <div style="width:20%;height:20px;">
           <!-- TODO: Not yet implemented.                                           -->
-          <!--  - Per Websocket, the command export will be transmitted to export   --> <!-- Prio 1 -->
+          <!--  - Per Websocket, the command export will be transmitted to export   --> <!-- Prio 1 --> <!-- TODO: In Server Full Resolution exportieren. -->
           <!--    the special export album to an USB stick in Full Resolution.      --> 
           <!--  - In next version, the export could be transferred to a Raspi       --> <!-- Prio 4 -->
           <!--    somewhere in the local network.                                   -->
@@ -122,19 +124,20 @@
     <!-- -------------------------------------------------------------------------- -->
     <div class="IVbody"> <!-- The picture(s) is shown.                              -->
       <div id="IVpool">
-        <div style="width:30%" id="IVimage">
+        <div style="width:30%" class="IVimage">
           <!-- See actions.ts for the next two functions: -->
           <!-- div style="width:30%" id="IVimage" onmouseover="IVShowAlbums(this)" 
                    onmouseout="IVUnShowAlbums(this)" -->
           <!-- TODO This should be the picture 'n-1'.     -->
-          <img src="./img/schnee.png"/>
+          <img id="IVImagePrev" src="./img/schnee.png"/>
         </div>
-        <div style="width:30%" id="IVimage">
+        <div style="width:30%" class="IVimage"
+             onclick="wsImageExport()" ondblclick="wsImageSetPrev()">
           <!-- div style="width:30%" id="IVimage" onkeydown="IVInterpretKey(event)" -->
           <!-- This is the image 'n' - the current image. -->
           <img id="IVImageMid" src="./img/default.png"/>
         </div>
-        <div style="width:30%" id="IVimage">
+        <div style="width:30%" class="IVimage">
           <!-- div style="width:30%" id="IVimage" onmouseover="wsImageVers()" -->
           <!-- TODO This should be the picture 'n+1'.     -->
           <img src="./img/wolken.png"/>
@@ -198,11 +201,11 @@
           <p class="IValbumsText" style="cursor: pointer;"
             title="Create new album" onclick="IVAlbumsCreateGUI()">
             +
-          </p>                                                                          <!-- TODO First -->    
+          </p>                                                                          <!-- DONE -->    
         </div>
         <div class="IValbumsDiv" id="IValbumsOverlay" style="display:none">
-          <input class="IValbumsChar" id="IValbumsOverlayChar" type="text" value="X"/>
-          <input class="IValbumsCreate" id="IValbumsOverlayContent" type="text" value="Export"/>
+          <p class="IValbumsChar" id="IValbumsOverlayChar">_</p>
+          <p class="IValbumsCreate" id="IValbumsOverlayContent">_</p>
         </div>
       </section>
     </div>
