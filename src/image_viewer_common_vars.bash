@@ -15,6 +15,7 @@
 # 2018-04-05 0.03 kdk With all variables from html_collect_pictures.
 # 2018-05-21 0.10 kdk With license text and file extension changed from inc to
 #                     bash.
+# 2020-11-16 0.11 kdk With ExportBashScript
 
 # #########################################
 #
@@ -67,6 +68,7 @@ ALBUMPOSTFIX=".csv"
 #THUMBNAILFOLDER="$DATABASEFOLDER/Thumbnails"
 THUMBNAILFOLDER="$HOME/Sites/ImageViewer/Thumbnails"
 EXPORTFOLDER="$HOME/tmp/ImageViewer/Export"
+EXPORTBASHSCRIPT="$EXPORTFOLDER/image_viewer_export.sh"
 # TODO MIRRORFOLDER
 # In JavaScript hard coded:
 #WEBFOLDER="$DATABASEFOLDER"

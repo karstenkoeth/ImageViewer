@@ -21,6 +21,7 @@
 # 2019-01-24 0.15 kdk Export Bug fixed
 # 2019-02-23 0.16 kdk AGET in echo, with AlbumJSON
 # 2019-02-25 0.17 kdk With ALBC + ALBD echo outout to inform client.
+# 2020-11-16 0.18 kdk With Export Script
 
 # #########################################
 #
@@ -91,7 +92,7 @@
 #
 
 PROG_NAME="image_viewer_server"
-PROG_VERSION="0.17"
+PROG_VERSION="0.18"
 
 # #########################################
 #
@@ -206,6 +207,16 @@ function ListFile()
   echo "$ssstmp"
   # Print the file name with relative path for webbrowser:
   #echo "$WEBTHUMBNAIL/$ssstmp"
+}
+
+# #########################################
+# ListFileExport
+# Print the absolute Path and filename to stdout.
+function ListFileExport()
+{
+  local stmp="${ListFileNames[$ListPos]}"
+  echod "ListFile" "'$stmp'"
+  echo "$stmp"
 }
 
 # #########################################
@@ -551,8 +562,12 @@ function AlbumExclude()
 # 1: filename
 function ExportFile()
 {
-  cp "$THUMBNAILFOLDER/$1" "$EXPORTFOLDER"
+  #cp "$THUMBNAILFOLDER/$1" "$EXPORTFOLDER"
   # TODO Nicht thumbnails, sondern originalbilder kopieren.
+  # Add to export-bash-script the original files:
+  echo "cp $1 $EXPORTFOLDER" >> $EXPORTBASHSCRIPT
+  # Vielleicht doch nur eine einfache Liste ausgeben und dann mit einem Script schauen, auf welche Originals man direkt kommt.
+  # Dieses Script könnte mit dem "EXPORT" Dialog aus der Titelleiste aufgerufen werden.
 }
 
 # ##############################################################################
@@ -721,7 +736,8 @@ while read line; do
 
     if [ "$CMD" = "EXPO" ] ; then
       # Export the file
-      ExportFile "$(ListFile)"
+      # ExportFile "$(ListFile)" # Version for exporting Thumbnails
+      ExportFile "$(ListFileExport)" # Version for exporting Originals via bash Script
     fi
 
     # Switch between different Cases:

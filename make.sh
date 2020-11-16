@@ -83,6 +83,7 @@ cp index.html "$TARGET"
 cp global.css "$TARGET"
 cp settings.html "$TARGET"
 cp information.html "$TARGET"
+cp helptext.html "$TARGET"
 
 # Actions
 #cp actions.js "$TARGET"
