@@ -22,11 +22,17 @@
 # 2019-02-23 0.16 kdk AGET in echo, with AlbumJSON
 # 2019-02-25 0.17 kdk With ALBC + ALBD echo outout to inform client.
 # 2020-11-16 0.18 kdk With Export Script
+# 2021-02-24 0.19 kdk With showVersion, Usage enhanced, PROG_NAME changed
 
 # #########################################
 #
 # Usage
 #
+# Start with:
+# $ imageviewer_startserver.sh
+#
+#
+# Or by hand:
 # Now let's turn it into a WebSocket server:
 #
 # $ websocketd --port=8080 ./image_viewer_server.sh
@@ -38,7 +44,7 @@
 #
 # MIT license (MIT)
 #
-# Copyright 2018 Karsten Köth
+# Copyright 2018 - 2021 by Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -91,8 +97,12 @@
 # Constants
 #
 
-PROG_NAME="image_viewer_server"
-PROG_VERSION="0.18"
+PROG_NAME="ImageViewer Server"
+PROG_VERSION="0.19"
+PROG_DATE="2021-02-24"
+PROG_CLASS="ImageViewer"
+PROG_SCRIPTNAME="image_viewer_server.sh"
+
 
 # #########################################
 #
@@ -559,7 +569,7 @@ function AlbumExclude()
 # ExportFile
 # Export the actual file to the export folder.
 # Parameter:
-# 1: filename
+#    1: filename
 function ExportFile()
 {
   #cp "$THUMBNAILFOLDER/$1" "$EXPORTFOLDER"
@@ -570,10 +580,65 @@ function ExportFile()
   # Dieses Script könnte mit dem "EXPORT" Dialog aus der Titelleiste aufgerufen werden.
 }
 
+ #########################################
+# showHelp()
+# Parameter
+#    -
+# Return Value
+#    -
+# Show help.
+function showHelp()
+{
+      echo "$PROG_SCRIPTNAME Program Parameter:"
+      echo "    -V     : Show Program Version"
+      echo "    -h     : Show this help"
+      echo ""
+      echo "Interface: Four character command code. Some commands have arguments:"
+      echo "QUIT       Quit program"
+      echo "ECHO text  Print text to stdout"
+      echo "VERS       Print program name and version number to stdout."
+      echo "DEBU=ON | OFF Switch debug output on and off. With debug on, the javascript will not work."
+      echo "TEST       Some test outputs."
+      echo "SHOW       Print the UUID to stdout."
+      echo "FILE       Print the image file name to stdout."
+      echo "OPEN       Shows the picture under MAC OS X"
+      echo "GIVE       Print the actual position in filelist to stdout."
+      echo "ALBU       Print the Album Name to a given Album Shortcut to stdout."
+      echo "...        More commands available."
+      echo ""
+      echo "Copyright $PROG_DATE by Karsten Köth"
+}
+
+# #########################################
+# showVersion()
+# Parameter
+#    -
+# Return Value
+#    -
+# Show version information.
+function showVersion()
+{
+    echo "$PROG_NAME ($PROG_CLASS) $PROG_VERSION"
+}
+
 # ##############################################################################
 #
 # Main
 #
+
+# No "Starting..." message: Normally, we are running as server.
+
+# Check for program parameters:
+if [ $# -eq 1 ] ; then
+    if [ "$1" = "-V" ] ; then
+        showVersion ; exit;
+    elif [ "$1" = "-h" ] ; then
+        showHelp ; exit;
+    else
+        echo "[$PROG_NAME:ERROR] Program parameter unknown. Exit." ; exit;
+    fi
+fi
+
 
 # Debug WebSockets:
 #DebugCounter
@@ -622,7 +687,7 @@ while read line; do
     fi
 
     if [ "$CMD" = "VERS" ] ; then
-      echo "$PROG_NAME ($PROG_VERSION)"
+      showVersion
     fi
 
     if [ "$CMD" = "DEBU" ] ; then
@@ -639,19 +704,7 @@ while read line; do
     fi
 
     if [ "$CMD" = "HELP" ] ; then
-      echo "$PROG_NAME ($PROG_VERSION)"
-      echo "Four character command code. Some commands have arguments:"
-      echo "QUIT      Quit program"
-      echo "ECHO text Print text to stdout"
-      echo "VERS      Print program name and version number to stdout."
-      echo "DEBU=ON | OFF Switch debug output on and off. With debug on, the javascript will not work."
-      echo "TEST      Some test outputs."
-      echo "SHOW      Print the UUID to stdout."
-      echo "FILE      Print the image file name to stdout."
-      echo "OPEN      Shows the picture under MAC OS X"
-      echo "GIVE      Print the actual position in filelist to stdout."
-      echo "ALBU      Print the Album Name to a given Album Shortcut to stdout."
-      echo "...       More commands available."
+      showHelp
     fi
 
     # List* Commands:
@@ -814,3 +867,5 @@ while read line; do
 
   fi
 done
+
+# No "Done." message: Normally, we are running as server.

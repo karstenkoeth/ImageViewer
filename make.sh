@@ -4,7 +4,7 @@
 #
 # MIT license (MIT)
 #
-# Copyright 2018 Karsten Köth
+# Copyright 2018 - 2021 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 #
 # COMMAND: ifconfig | grep "inet " | grep "broadcast" | cut -f 2 -d " "
 # OUTPUT:  10.0.1.12 (2018-05-22)
-# RUN: websocketd --port=8080 ./image_viewer_server.sh
+# RUN: image_viewer_startserver.sh
 
 # #########################################
 #
@@ -108,6 +108,7 @@ echo "Install Server ..."
 cp image_viewer_server.sh "$SERVER"
 cp image_viewer_common_vars.bash "$SERVER"
 cp image_viewer_common_func.bash "$SERVER"
+cp image_viewer_startserver.sh "$SERVER"
 cp html_collect_pictures.sh "$SERVER"
 cp exif2html.sh "$SERVER"
 cp html_updater_server.sh "$SERVER" 
@@ -116,6 +117,7 @@ echo "Post install ..."
 chmod u+x "$SERVER/image_viewer_server.sh"
 chmod u+x "$SERVER/image_viewer_common_vars.bash"
 chmod u+x "$SERVER/image_viewer_common_func.bash"
+chmod u+x "$SERVER/image_viewer_startserver.sh"
 chmod u+x "$SERVER/html_collect_pictures.sh"
 chmod u+x "$SERVER/exif2html.sh"
 chmod u+x "$SERVER/html_updater_server.sh"
@@ -124,8 +126,9 @@ chmod u+x "$SERVER/html_updater_server.sh"
 
 echo "Done."
 echo ""
-echo "Run with: websocketd --port=8080 ./image_viewer_server.sh"
-echo "Run with: websocketd --port=8081 ./html_updater_server.sh"
+echo "Run with: image_viewer_startserver.sh"
+#echo "Run with: websocketd --port=8080 ./image_viewer_server.sh"
+#echo "Run with: websocketd --port=8081 ./html_updater_server.sh"
 echo ""
 MYMASCHINE=$(ifconfig | grep "inet " | grep "broadcast" | cut -f 2 -d " ")
 echo "You will run on $MYMASCHINE"
