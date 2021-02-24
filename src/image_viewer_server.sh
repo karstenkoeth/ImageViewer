@@ -575,9 +575,12 @@ function ExportFile()
   #cp "$THUMBNAILFOLDER/$1" "$EXPORTFOLDER"
   # TODO Nicht thumbnails, sondern originalbilder kopieren.
   # Add to export-bash-script the original files:
-  echo "cp $1 $EXPORTFOLDER" >> $EXPORTBASHSCRIPT
+  echo "cp $1 $EXPORTFOLDER/" >> $EXPORTBASHSCRIPT
   # Vielleicht doch nur eine einfache Liste ausgeben und dann mit einem Script schauen, auf welche Originals man direkt kommt.
   # Dieses Script könnte mit dem "EXPORT" Dialog aus der Titelleiste aufgerufen werden.
+  # Das EXPORTBASHSCRIPT wurde noch nicht getestet!
+  # Derzeit enthält $1 nur die Bild-UUID - Zuordnung erfolgt über UUIDFILE: UUID ; Full Path with File Name
+  # Umrechnungs-Funktion könnte showFilePath lauten. Input UUID, Output Full Path with File Name 
 }
 
  #########################################
