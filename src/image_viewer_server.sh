@@ -23,6 +23,7 @@
 # 2019-02-25 0.17 kdk With ALBC + ALBD echo outout to inform client.
 # 2020-11-16 0.18 kdk With Export Script
 # 2021-02-24 0.19 kdk With showVersion, Usage enhanced, PROG_NAME changed
+# 2021-02-28 0.20 kdk File lookup for export
 
 # #########################################
 #
@@ -569,17 +570,26 @@ function AlbumExclude()
 # ExportFile
 # Export the actual file to the export folder.
 # Parameter:
-#    1: filename
+#    1: image-UUID
 function ExportFile()
 {
   #cp "$THUMBNAILFOLDER/$1" "$EXPORTFOLDER"
   # TODO Nicht thumbnails, sondern originalbilder kopieren.
+  # We do not copy the files directly, we create a copy script. 
+  # The advantage: Maybe, some files are stored on disks not always on.
+  # Get from UUID the correct file:
+  tmpFile=$(grep $1 "$UUIDFILE" | cut -d ";" -f 2 - )
+  # Maybe this is the first time we write into the script! First line must be special command:
+  if [ ! -f "$EXPORTBASHSCRIPT" ] ; then
+    echo "#!/bin/bash" > "$EXPORTBASHSCRIPT"
+    chmod u+x "$EXPORTBASHSCRIPT"
+  fi
   # Add to export-bash-script the original files:
-  echo "cp $1 $EXPORTFOLDER/" >> $EXPORTBASHSCRIPT
+  echo "cp \"$tmpFile\" \"$EXPORTFOLDER/\"" >> "$EXPORTBASHSCRIPT"
   # Vielleicht doch nur eine einfache Liste ausgeben und dann mit einem Script schauen, auf welche Originals man direkt kommt.
   # Dieses Script könnte mit dem "EXPORT" Dialog aus der Titelleiste aufgerufen werden.
   # Das EXPORTBASHSCRIPT wurde noch nicht getestet!
-  # Derzeit enthält $1 nur die Bild-UUID - Zuordnung erfolgt über UUIDFILE: UUID ; Full Path with File Name
+  # Derzeit enthält $1 nur die Bild-UUID - Zuordnung erfolgt über UUIDFILE (filenames.csv): UUID ; Full Path with File Name
   # Umrechnungs-Funktion könnte showFilePath lauten. Input UUID, Output Full Path with File Name 
 }
 

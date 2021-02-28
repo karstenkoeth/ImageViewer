@@ -38,8 +38,9 @@
 // 2020-10-31 0.29 event.preventDefault() added.
 // 2020-11-04 0.30 Input optimized
 // 2020-11-08 0.31 Export a little bit more
+// 2021-02-28 0.32 SetImageleft with 'Space'
 
-var WEBSOCKETS_VERSION = "0.31";
+var WEBSOCKETS_VERSION = "0.32";
 var WEBSOCKETS_SUBVERSION = "02";
 
 
@@ -528,7 +529,9 @@ var WEBSOCKETS_SUBVERSION = "02";
               ( myKey == 'ArrowDown' ) || 
               ( myKey == 'ArrowLeft' ) || 
               ( myKey == 'ArrowRight' )  ||
-              ( myKey == '+')
+              ( myKey == '+' ) ||
+              ( myKey == 'Space' ) ||
+              ( myKey == ' ' )
             )
         {
           // BEGIN Arrow Level /////////////////////////////////////////////////
@@ -560,6 +563,13 @@ var WEBSOCKETS_SUBVERSION = "02";
             IVAlbumsCreateGUI();
           }
           // END Change Level //////////////////////////////////////////////////
+
+          // BEGIN Set left image  /////////////////////////////////////////////
+          if (  ( myKey == 'Space' ) || ( myKey == ' ' )  )
+          {
+            wsImageSetPrev();
+          }
+          // END Set left image  ///////////////////////////////////////////////
         } else {
           // BEGIN Album Level /////////////////////////////////////////////////
           //wsLog('B    Album Level');

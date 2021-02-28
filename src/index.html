@@ -29,10 +29,11 @@
   // 2020-10-31 0.29 kdk Key event handling optimized
   // 2020-11-04 0.30 kdk Input optimized.
   // 2020-11-08 0.31 kdk 
+  // 2021-02-28 0.32 kdk No Double Click. Reason: a double click always trigger also twi single click events.
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.31";
-  var PROG_SUBVERSION = "02";
+  var PROG_VERSION = "0.32";
+  var PROG_SUBVERSION = "01";
 
   // ///////////////////////////////////////////////////////////////////////////
   // 
@@ -132,7 +133,7 @@
           <img id="IVImagePrev" src="./img/schnee.png"/>
         </div>
         <div style="width:30%" class="IVimage"
-             onclick="wsImageExport()" ondblclick="wsImageSetPrev()">
+             onclick="wsImageExport()">   <!-- </div> ondblclick="wsImageSetPrev()" -->
           <!-- div style="width:30%" id="IVimage" onkeydown="IVInterpretKey(event)" -->
           <!-- This is the image 'n' - the current image. -->
           <img id="IVImageMid" src="./img/default.png"/>
@@ -224,7 +225,7 @@
       <pre id="wslogoutput"></pre>
 
       <p id="debugoutputpar">
-        Copyright 2019 Karsten Köth -
+        Copyright 2021 - 2019 Karsten Köth -
         <a href="https://opensource.org/licenses/MIT">MIT License</a> -
         <a href="https://github.com/karstenkoeth/ImageViewer">Source</a> -
       </p>
