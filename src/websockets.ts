@@ -39,9 +39,10 @@
 // 2020-11-04 0.30 Input optimized
 // 2020-11-08 0.31 Export a little bit more
 // 2021-02-28 0.32 SetImageleft with 'Space'
+// 2021-03-19 0.33 Show Information in Information Window and Main Window
 
-var WEBSOCKETS_VERSION = "0.32";
-var WEBSOCKETS_SUBVERSION = "02";
+var WEBSOCKETS_VERSION = "0.33";
+var WEBSOCKETS_SUBVERSION = "03";
 
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -763,6 +764,7 @@ var WEBSOCKETS_SUBVERSION = "02";
     let sstr = str.split("=");
     let command = sstr[0];
     let content = sstr[1];
+    //wsLog('B    Searching command ' + command + '.');
     // Do Command: /////////////////////////////////////////////////////////////
     if ( command == 'ACKN')
     {
@@ -775,6 +777,7 @@ var WEBSOCKETS_SUBVERSION = "02";
     if ( command == 'FILE')
     {
       // FILE - image file name
+      //wsLog('B<-S FILE information received.');
       let img = document.getElementById('IVImageMid');
       img.setAttribute('src', './Thumbnails/' + content);
       // $DATETIME.$UUID.$WIDTH"x"$HEIGHT.$CAMERA.THUMB.$FILENAME
@@ -787,13 +790,17 @@ var WEBSOCKETS_SUBVERSION = "02";
       let filenameDimensions : string = sstr[3];
       let filenameCamera : string = sstr[4];
       // Show Information in Information Window and on Programmers Corner:
-      windowInformation.document.getElementById("IVTextInformationDate").textContent=filenameDate;
+      //windowInformation.document.getElementById("IVTextInformationDate").textContent=filenameDate;
+      document.getElementById("IVTextInformationDate").textContent=filenameDate;
       wsLog(filenameDate);
-      windowInformation.document.getElementById("IVTextInformationTime").textContent=filenameTimeNice;
+      //windowInformation.document.getElementById("IVTextInformationTime").textContent=filenameTimeNice;
+      document.getElementById("IVTextInformationTime").textContent=filenameTimeNice;
       wsLog(filenameTime + '   ' + filenameTimeNice);
-      windowInformation.document.getElementById("IVTextInformationDim").textContent=filenameDimensions;
+      //windowInformation.document.getElementById("IVTextInformationDim").textContent=filenameDimensions;
+      document.getElementById("IVTextInformationDim").textContent=filenameDimensions;
       wsLog(filenameDimensions);
-      windowInformation.document.getElementById("IVTextInformationCam").textContent=filenameCamera;
+      //windowInformation.document.getElementById("IVTextInformationCam").textContent=filenameCamera;
+      document.getElementById("IVTextInformationCam").textContent=filenameCamera;
       wsLog(filenameCamera);
     }
     if ( command == 'GIVE')

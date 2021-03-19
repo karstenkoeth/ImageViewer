@@ -12,12 +12,13 @@
 /* 2020-03-11 0.17 kdk IValbumsChar added and some formatting                 */
 /* 2020-11-04 0.18 kdk IValbumsChar changed                                   */
 /* 2020-11-08 0.31 kdk IVImage changed from id to class                       */
+/* 2021-03-19 0.33 kdk IVlabel also as class                                  */
 
 /*
 #
 # MIT license (MIT)
 #
-# Copyright 2018 Karsten Köth
+# Copyright 2021-2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -71,6 +72,14 @@ a:hover   { text-decoration: none; color: rgb(212, 231, 246); } /* lightprimaryc
 a:active  { text-decoration: none; color: black; }
 
 #IVlabel {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: bold;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+}
+
+.IVlabel {
   font-family: 'Open Sans', sans-serif;
   font-weight: bold;
   width: 100%;

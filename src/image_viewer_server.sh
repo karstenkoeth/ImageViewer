@@ -24,13 +24,14 @@
 # 2020-11-16 0.18 kdk With Export Script
 # 2021-02-24 0.19 kdk With showVersion, Usage enhanced, PROG_NAME changed
 # 2021-02-28 0.20 kdk File lookup for export
+# 2021-03-19 0.21 kdk Comments added.
 
 # #########################################
 #
 # Usage
 #
 # Start with:
-# $ imageviewer_startserver.sh
+# $ image_viewer_startserver.sh &
 #
 #
 # Or by hand:
@@ -99,8 +100,8 @@
 #
 
 PROG_NAME="ImageViewer Server"
-PROG_VERSION="0.19"
-PROG_DATE="2021-02-24"
+PROG_VERSION="0.21"
+PROG_DATE="2021-03-19"
 PROG_CLASS="ImageViewer"
 PROG_SCRIPTNAME="image_viewer_server.sh"
 
@@ -573,8 +574,9 @@ function AlbumExclude()
 #    1: image-UUID
 function ExportFile()
 {
+  # Das kopiert Thumbnail Bilder:
   #cp "$THUMBNAILFOLDER/$1" "$EXPORTFOLDER"
-  # TODO Nicht thumbnails, sondern originalbilder kopieren.
+  # Nicht thumbnails, sondern originalbilder kopieren.
   # We do not copy the files directly, we create a copy script. 
   # The advantage: Maybe, some files are stored on disks not always on.
   # Get from UUID the correct file:
@@ -591,6 +593,7 @@ function ExportFile()
   # Das EXPORTBASHSCRIPT wurde noch nicht getestet!
   # Derzeit enthält $1 nur die Bild-UUID - Zuordnung erfolgt über UUIDFILE (filenames.csv): UUID ; Full Path with File Name
   # Umrechnungs-Funktion könnte showFilePath lauten. Input UUID, Output Full Path with File Name 
+  # Aber derzeit ohne Umrechnungsfunktion implementiert.
 }
 
  #########################################

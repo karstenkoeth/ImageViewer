@@ -30,10 +30,11 @@
   // 2020-11-04 0.30 kdk Input optimized.
   // 2020-11-08 0.31 kdk 
   // 2021-02-28 0.32 kdk No Double Click. Reason: a double click always trigger also twi single click events.
+  // 2021-03-19 0.33 kdk Comments changed
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.32";
-  var PROG_SUBVERSION = "01";
+  var PROG_VERSION = "0.33";
+  var PROG_SUBVERSION = "06";
 
   // ///////////////////////////////////////////////////////////////////////////
   // 
@@ -92,10 +93,10 @@
           <!--  - A popup appears show the actual status of the Scan.               -->
           Scan
         </div>
-        <div  style="width:20%;height:20px;cursor:pointer" 
-              onclick="window.open('information.html?'+ PROG_VERSION + PROG_SUBVERSION,
+        <div  style="width:20%;height:20px;cursor:pointer">
+          <!--    onclick="window.open('information.html?'+ PROG_VERSION + PROG_SUBVERSION,
               'Information',
-              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')">
+              'width=500,height=280,location=no,menubar=no,status=no,toolbar=no,titlebar=no')" -->
           <!-- Category: xxx -->
           Information
         </div>
@@ -111,7 +112,7 @@
         </div>
         <div style="width:20%;height:20px;">
           <!-- TODO: Not yet implemented.                                           -->
-          <!--  - Per Websocket, the command export will be transmitted to export   --> <!-- Prio 1 --> <!-- TODO: In Server Full Resolution exportieren. -->
+          <!--  - Per Websocket, the command export will be transmitted to export   --> <!-- Prio 1 --> 
           <!--    the special export album to an USB stick in Full Resolution.      --> 
           <!--  - In next version, the export could be transferred to a Raspi       --> <!-- Prio 4 -->
           <!--    somewhere in the local network.                                   -->
@@ -141,7 +142,29 @@
         <div style="width:30%" class="IVimage">
           <!-- div style="width:30%" id="IVimage" onmouseover="wsImageVers()" -->
           <!-- TODO This should be the picture 'n+1'.     -->
-          <img src="./img/wolken.png"/>
+          <!-- In versione before 0.33 an iamge was shown here. Later, the image information is shown. -->
+          <!-- img src="./img/wolken.png"/ -->
+          <div class="IVdelimiter"></div>
+
+          <section>
+            <div class="IVlabel">Date: &nbsp;</div>
+            <div class="IVtext"              id="IVTextInformationDate">_</div>
+          </section>
+          <div class="IVdelimiter"></div>
+          <section>
+            <div class="IVlabel">Time: &nbsp;</div>
+            <div class="IVtext"              id="IVTextInformationTime">_</div>
+          </section>
+          <div class="IVdelimiter"></div>
+          <section>
+            <div class="IVlabel">Dimension: &nbsp;</div>
+            <div class="IVtext"              id="IVTextInformationDim">_</div>
+          </section>
+          <div class="IVdelimiter"></div>
+          <section>
+            <div class="IVlabel">Source: &nbsp;</div>
+            <div class="IVtext"            id="IVTextInformationCam">_</div>
+          </section>
         </div>
       </div>
     </div>
