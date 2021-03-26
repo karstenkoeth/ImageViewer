@@ -20,12 +20,13 @@
 # 2018-04-06 0.14 kdk With two Includes
 # 2018-05-21 0.15 kdk Include file extension changed from inc to bash, with
 #                     license text.
+# 2021-03-26 0.16 kdk Bug fixing
 
 # #########################################
 #
 # MIT license (MIT)
 #
-# Copyright 2018 Karsten Köth
+# Copyright 2021 - 2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -161,7 +162,10 @@
 #
 
 PROG_NAME="html_collect_pictures"
-
+PROG_VERSION="0.16"
+PROG_DATE="2021-03-26"
+PROG_CLASS="ImageViewer"
+PROG_SCRIPTNAME="html_collect_pictures.sh"
 
 # #########################################
 #
@@ -173,9 +177,6 @@ source image_viewer_common_vars.bash
 
 
 RECURSIVE="0"
-
-
-SETTINGSFILE="$HOME/.imageviewer"
 
 # #########################################
 #
@@ -206,7 +207,7 @@ function CheckSettings()
   fi
   if [ -n "$TMPCONF" ] ; then
     # The option is configured. Get the new content and test it:
-    TMPCONF=`echo "$TMPCONF" | cut -d = -f 2`
+    TMPCONF=$(echo "$TMPCONF" | cut -d = -f 2)
     echod "CheckSettings:DATABASEFOLDER" "TMPCONF=\"$TMPCONF\""
     if [ ! -d "$TMPCONF" ] ; then
       # Try to create dir:
@@ -215,7 +216,7 @@ function CheckSettings()
     if [ -d "$TMPCONF" ] ; then
       # Directory exists
       # Could we write into it?
-      TMPFILE=`mktemp "$TMPCONF"/test.XXXXXXXXX`
+      TMPFILE=$(mktemp "$TMPCONF"/test.XXXXXXXXX)
       if [ -e "$TMPFILE" ] ; then
         rm "$TMPFILE"
         DATABASEFOLDER="$TMPCONF"
@@ -243,7 +244,7 @@ function CheckSettings()
       # Directory exists
       echod "CheckSettings:DATABASEFOLDER:Default" "Folder exists."
       # Could we write into it?
-      TMPFILE=`mktemp "$DATABASEFOLDER"/test.XXXXXXXXX`
+      TMPFILE=$(mktemp "$DATABASEFOLDER"/test.XXXXXXXXX)
       if [ -e "$TMPFILE" ] ; then
         rm "$TMPFILE"
         # all ok, next settings
@@ -263,7 +264,7 @@ function CheckSettings()
   fi
   if [ -n "$TMPCONF" ] ; then
     # The option is configured. Get the new content and test it:
-    TMPCONF=`echo "$TMPCONF" | cut -d = -f 2`
+    TMPCONF=$(echo "$TMPCONF" | cut -d = -f 2)
     echod "CheckSettings:THUMBNAILFOLDER" "TMPCONF=\"$TMPCONF\""
     if [ ! -d "$TMPCONF" ] ; then
       # Try to create dir:
@@ -272,7 +273,7 @@ function CheckSettings()
     if [ -d "$TMPCONF" ] ; then
       # Directory exists
       # Could we write into it?
-      TMPFILE=`mktemp "$TMPCONF"/test.XXXXXXXXX`
+      TMPFILE=$(mktemp "$TMPCONF"/test.XXXXXXXXX)
       if [ -e "$TMPFILE" ] ; then
         rm "$TMPFILE"
         THUMBNAILFOLDER="$TMPCONF"
@@ -297,7 +298,7 @@ function CheckSettings()
     if [ -d "$THUMBNAILFOLDER" ] ; then
       # Directory exists
       # Could we write into it?
-      TMPFILE=`mktemp "$THUMBNAILFOLDER"/test.XXXXXXXXX`
+      TMPFILE=$(mktemp "$THUMBNAILFOLDER"/test.XXXXXXXXX)
       if [ -e "$TMPFILE" ] ; then
         rm "$TMPFILE"
         # all ok, next settings
@@ -316,7 +317,7 @@ function CheckSettings()
   fi
   if [ -n "$TMPCONF" ] ; then
     # The option is configured. Get the new content and test it:
-    TMPCONF=`echo "$TMPCONF" | cut -d = -f 2`
+    TMPCONF=$(echo "$TMPCONF" | cut -d = -f 2)
     echod "CheckSettings:EXPORTFOLDER" "TMPCONF=\"$TMPCONF\""
     if [ ! -d "$TMPCONF" ] ; then
       # Try to create dir:
@@ -325,7 +326,7 @@ function CheckSettings()
     if [ -d "$TMPCONF" ] ; then
       # Directory exists
       # Could we write into it?
-      TMPFILE=`mktemp "$TMPCONF"/test.XXXXXXXXX`
+      TMPFILE=$(mktemp "$TMPCONF"/test.XXXXXXXXX)
       if [ -e "$TMPFILE" ] ; then
         rm "$TMPFILE"
         EXPORTFOLDER="$TMPCONF"
@@ -350,7 +351,7 @@ function CheckSettings()
     if [ -d "$EXPORTFOLDER" ] ; then
       # Directory exists
       # Could we write into it?
-      TMPFILE=`mktemp "$EXPORTFOLDER"/test.XXXXXXXXX`
+      TMPFILE=$(mktemp "$EXPORTFOLDER"/test.XXXXXXXXX)
       if [ -e "$TMPFILE" ] ; then
         rm "$TMPFILE"
         # all ok, next settings
@@ -372,7 +373,7 @@ function CheckSettings()
   fi
   if [ -n "$TMPCONF" ] ; then
     # The option is configured. Get the new content and test it:
-    TMPCONF=`echo "$TMPCONF" | cut -d = -f 2`
+    TMPCONF=$(echo "$TMPCONF" | cut -d = -f 2)
     echod "CheckSettings:DATABASEFILE" "TMPCONF=\"$TMPCONF\""
     if [ -n "$TMPCONF" ] ; then
       if [ ! -e "$TMPCONF" ] ; then
@@ -407,7 +408,7 @@ function CheckSettings()
   fi
   if [ -n "$TMPCONF" ] ; then
     # The option is configured. Get the new content and test it:
-    TMPCONF=`echo "$TMPCONF" | cut -d = -f 2`
+    TMPCONF=$(echo "$TMPCONF" | cut -d = -f 2)
     echod "CheckSettings:UUIDFILE" "TMPCONF=\"$TMPCONF\""
     if [ -n "$TMPCONF" ] ; then
       if [ ! -e "$TMPCONF" ] ; then
@@ -446,7 +447,7 @@ function CheckDatabaseFolder()
   if [ -d "$DATABASEFOLDER" ] ; then
     # Directory exists
     # Could we write into it?
-    TMPFILE=`mktemp "$DATABASEFOLDER"/test.XXXXXXXXX`
+    TMPFILE=$(mktemp "$DATABASEFOLDER"/test.XXXXXXXXX)
     if [ -e "$TMPFILE" ] ; then
       rm "$TMPFILE"
       # We could use folder.
@@ -469,7 +470,7 @@ function CheckThumbnailFolder()
   if [ -d "$THUMBNAILFOLDER" ] ; then
     # Directory exists
     # Could we write into it?
-    TMPFILE=`mktemp "$THUMBNAILFOLDER"/test.XXXXXXXXX`
+    TMPFILE=$(mktemp "$THUMBNAILFOLDER"/test.XXXXXXXXX)
     if [ -e "$TMPFILE" ] ; then
       rm "$TMPFILE"
       # We could use folder.
@@ -492,7 +493,7 @@ function CheckExportFolder()
   if [ -d "$EXPORTFOLDER" ] ; then
     # Directory exists
     # Could we write into it?
-    TMPFILE=`mktemp "$EXPORTFOLDER"/test.XXXXXXXXX`
+    TMPFILE=$(mktemp "$EXPORTFOLDER"/test.XXXXXXXXX)
     if [ -e "$TMPFILE" ] ; then
       rm "$TMPFILE"
       # We could use folder.
@@ -529,6 +530,39 @@ function DebugProgParams()
   echo "[$PROG_NAME:DebugProgParams] verzeichnis=$verzeichnis"
 }
 
+# #########################################
+# showHelp()
+# Parameter
+#    -
+# Return Value
+#    -
+# Show help.
+function showHelp()
+{
+    echo "[$PROG_NAME:STATUS] Program Parameter:"
+    echo "    -V     : Show Program Version"
+    echo "    -h     : Show this help"
+    echo "    -d     : Debug output on."
+    echo "    -v     : Verbose output on."
+    echo "    -w     : Warning output on."
+    echo "    -e     : Error output on."
+    echo "    -q     : Normal output off. Be quiet. Show only warnings and errors."
+    echo "    -Q     : Be absolute quit. Show nothing."
+    echo "Copyright $PROG_DATE by Karsten Köth"
+}
+
+# #########################################
+# showVersion()
+# Parameter
+#    -
+# Return Value
+#    -
+# Show version information.
+function showVersion()
+{
+    echo "$PROG_NAME ($PROG_CLASS) $PROG_VERSION"
+}
+
 # ##############################################################################
 #
 # Main
@@ -542,14 +576,20 @@ if [ $# -gt 0 ] ; then
       echod "Main:Program Parameter:Scan" "$param"
       if [ "$param" = "-d" ] ; then
         ECHODEBUG="1"
+        ECHOVERBOSE="1"
+        ECHOWARNING="1"
+        ECHOERROR="1"
         echod "Main:Program Parameter:Scan" "Debug output on."
       fi
       if [ "$param" = "-v" ] ; then
         ECHOVERBOSE="1"
+        ECHOWARNING="1"
+        ECHOERROR="1"
         echod "Main:Program Parameter:Scan" "Verbose output on."
       fi
       if [ "$param" = "-w" ] ; then
         ECHOWARNING="1"
+        ECHOERROR="1"
         echod "Main:Program Parameter:Scan" "Warning output on."
       fi
       if [ "$param" = "-e" ] ; then
@@ -560,18 +600,31 @@ if [ $# -gt 0 ] ; then
         ECHONORMAL="0"
         echod "Main:Program Parameter:Scan" "Normal output off. Be quiet."
       fi
+      if [ "$param" = "-Q" ] ; then
+        ECHODEBUG="0"
+        ECHOVERBOSE="0"
+        ECHONORMAL="0"
+        ECHOWARNING="0"
+        ECHOERROR="0"
+        echod "Main:Program Parameter:Scan" "Be absolute quiet."
+      fi
       if [ "$param" = "-r" ] ; then
         RECURSIVE="1"
         echod "Main:Program Parameter:Scan" "In recursive execution ..."
       fi
-
+      if [ "$param" = "-h" ] ; then
+        showHelp ; exit;
+      fi
+      if [ "$param" = "-V" ] ; then
+        showVersion ; exit;
+      fi
   done
 fi
 
 if [ "$RECURSIVE" = "0" ] ; then
   # Check Settings:
   if [ -e "$SETTINGSFILE" ] ; then
-    # Check, if some settings aer stored in the file:
+    # Check, if some settings are stored in the file:
     CheckSettings "$SETTINGSFILE"
   else
     # The file did not exists, but the standard tests should be done:
@@ -629,7 +682,7 @@ do
     echod "Main:Parse" "Program parameter, no file or folder. Skip."
   else
     # $datei zerlegen in pfad und rest:
-    PART=`basename "$datei"`
+    PART=$(basename "$datei")
     if [ -d "$datei" ] ; then
       # Directory: Only walk down the tree:
       if [ "$PART" != "." ] && [ "$PART" != ".." ]
@@ -653,7 +706,7 @@ do
         echow "Main:File" "File $datei not readable or has size zero. Skip."
       else
         # Get mime type...
-        MIMETYPE=`file --mime-type --separator ";" "$datei" | cut -d ";" -f 2 `
+        MIMETYPE=$(file --mime-type --separator ";" "$datei" | cut -d ";" -f 2 )
         echod "Main:MimeType" ">$MIMETYPE<"
 
         # #########################################
@@ -669,7 +722,7 @@ do
           export IMAGEVIEWERTHUMB=""
           export IMAGEVIEWERFILENAME="$PART"
           # Create file to get variables from exif2html.sh:
-          export IMAGEVIEWERTMPFILE=`mktemp .$PROG_NAME.Return.XXXXXXXXX`
+          export IMAGEVIEWERTMPFILE=$(mktemp .$PROG_NAME.Return.XXXXXXXXX)
           # Run exif2html.sh "$FULLPATH" #>> "$DATABASEFILE"
           exif2html.sh "$datei"
           # Get ariables from exif2html.sh:

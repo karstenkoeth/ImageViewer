@@ -31,10 +31,11 @@
   // 2020-11-08 0.31 kdk 
   // 2021-02-28 0.32 kdk No Double Click. Reason: a double click always trigger also twi single click events.
   // 2021-03-19 0.33 kdk Comments changed
+  // 2021-03-26 0.34 kdk Comments added and TODOs
 
   var PROG_NAME = "ImageViewer";
-  var PROG_VERSION = "0.33";
-  var PROG_SUBVERSION = "06";
+  var PROG_VERSION = "0.34";
+  var PROG_SUBVERSION = "01";
 
   // ///////////////////////////////////////////////////////////////////////////
   // 
@@ -46,7 +47,7 @@
   //
   // MIT license (MIT)
   //
-  // Copyright 2018 Karsten Köth
+  // Copyright 2021 - 2018 Karsten Köth
   //
   // Permission is hereby granted, free of charge, to any person obtaining a copy
   // of this software and associated documentation files (the "Software"), to deal
@@ -65,6 +66,13 @@
   // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   // THE SOFTWARE.
+
+  // ///////////////////////////////////////////////////////////////////////////
+  //
+  // TODOs
+  //
+  // Rotate image one or more times and remember rotation.
+  // Maybe rotate Thumbnail on file level and reload image.
 
   </script>
 
@@ -91,6 +99,8 @@
           <!--  - Per Websocket, the command will be transmitted to start a new     --> <!-- Prio 7 -->
           <!--    Scan of the filesystem.                                           -->
           <!--  - A popup appears show the actual status of the Scan.               -->
+          <!-- Before this makes sense: The Backend must be able to reread the      -->
+          <!-- database.                                                            -->
           Scan
         </div>
         <div  style="width:20%;height:20px;cursor:pointer">

@@ -4,7 +4,8 @@
 #
 # This is an bash script include file.
 # This file is used by:
-# image_viewer_server.sh
+#  • image_viewer_server.sh
+#  • html_collect_pictures.sh
 
 # #########################################
 #
@@ -16,12 +17,13 @@
 # 2018-05-21 0.10 kdk With license text and file extension changed from inc to
 #                     bash.
 # 2020-11-16 0.11 kdk With ExportBashScript
+# 2021-03-26 0.12 kdk With more comments
 
 # #########################################
 #
 # MIT license (MIT)
 #
-# Copyright 2018 Karsten Köth
+# Copyright 2021 - 2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -58,6 +60,7 @@ ECHOERROR="1"
 #
 
 HOME="/Users/koeth"
+SETTINGSFILE="$HOME/.imageviewer"
 DATABASEFOLDER="$HOME/Pictures/ImageViewer"
 #DATABASEFOLDER="$HOME/Sites/ImageViewer"
 DATABASEFILE="$DATABASEFOLDER/pictures.csv"
@@ -68,7 +71,7 @@ ALBUMPOSTFIX=".csv"
 #THUMBNAILFOLDER="$DATABASEFOLDER/Thumbnails"
 THUMBNAILFOLDER="$HOME/Sites/ImageViewer/Thumbnails"
 EXPORTFOLDER="$HOME/tmp/ImageViewer/Export"
-EXPORTBASHSCRIPT="$EXPORTFOLDER/image_viewer_export.sh"
+EXPORTBASHSCRIPT="$EXPORTFOLDER/image_viewer_export.sh" # Will be created by image_viewer_server.sh
 # TODO MIRRORFOLDER
 # In JavaScript hard coded:
 #WEBFOLDER="$DATABASEFOLDER"
