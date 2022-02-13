@@ -11,10 +11,11 @@
 # Versions
 #
 # 2021-02-24 0.01 kdk First Version - Done of base from bashutils/bash-script-template.sh 2021-02-08 0.04
+# 2022-02-13 0.02 kdk Check for filename in program parameter removed. 
 
 PROG_NAME="ImageViewer Start"
-PROG_VERSION="0.01"
-PROG_DATE="2021-02-24"
+PROG_VERSION="0.02"
+PROG_DATE="2022-02-13"
 PROG_CLASS="ImageViewer"
 PROG_SCRIPTNAME="image_viewer_startserver.sh"
 
@@ -168,14 +169,12 @@ echo "[$PROG_NAME] Starting ..."
 
 # Check for program parameters:
 if [ $# -eq 1 ] ; then
-    if [ -f "$1" ] ; then
-        echo "[$PROG_NAME:STATUS] Input file exists."
-    elif [ "$1" = "-V" ] ; then
+    if [ "$1" = "-V" ] ; then
         showVersion ; exit;
     elif [ "$1" = "-h" ] ; then
         showHelp ; exit;
     else
-        echo "[$PROG_NAME:ERROR] No input file. Exit." ; exit;
+        echo "[$PROG_NAME:ERROR] Unknown program parameter '$1'. Exit." ; exit;
     fi
 fi
 

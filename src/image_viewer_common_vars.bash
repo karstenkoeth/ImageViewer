@@ -18,6 +18,7 @@
 #                     bash.
 # 2020-11-16 0.11 kdk With ExportBashScript
 # 2021-03-26 0.12 kdk With more comments
+# 2022-02-13 0.13 kdk With FULLHDFOLDER support
 
 # #########################################
 #
@@ -70,6 +71,8 @@ ALBUMPREFIX="$DATABASEFOLDER/album_"
 ALBUMPOSTFIX=".csv"
 #THUMBNAILFOLDER="$DATABASEFOLDER/Thumbnails"
 THUMBNAILFOLDER="$HOME/Sites/ImageViewer/Thumbnails"
+#FULLHDFOLDER="$HOME/Sites/ImageViewer/FullHD"
+FULLHDFOLDER="/Volumes/SD-Card/ImageViewer/FullHD"
 EXPORTFOLDER="$HOME/tmp/ImageViewer/Export"
 EXPORTBASHSCRIPT="$EXPORTFOLDER/image_viewer_export.sh" # Will be created by image_viewer_server.sh
 # TODO MIRRORFOLDER

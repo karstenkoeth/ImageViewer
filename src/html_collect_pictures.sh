@@ -21,6 +21,7 @@
 # 2018-05-21 0.15 kdk Include file extension changed from inc to bash, with
 #                     license text.
 # 2021-03-26 0.16 kdk Bug fixing
+# 2022-02-13 0.17 kdk showHelp() enhanced with '-r', FULLHDFOLDER support added
 
 # #########################################
 #
@@ -162,8 +163,8 @@
 #
 
 PROG_NAME="html_collect_pictures"
-PROG_VERSION="0.16"
-PROG_DATE="2021-03-26"
+PROG_VERSION="0.17"
+PROG_DATE="2022-02-13"
 PROG_CLASS="ImageViewer"
 PROG_SCRIPTNAME="html_collect_pictures.sh"
 
@@ -305,6 +306,59 @@ function CheckSettings()
       else
         # directory exists but not useable:
         echoe "CheckSettings:THUMBNAILFOLDER" "Can't use default thumbnail folder. Exit."
+        exit
+      fi
+    fi
+  fi
+
+  if [ -r "$1" ] ; then
+    TMPCONF=$(grep FULLHDFOLDER "$1")
+  else
+    TMPCONF=""
+  fi
+  if [ -n "$TMPCONF" ] ; then
+    # The option is configured. Get the new content and test it:
+    TMPCONF=$(echo "$TMPCONF" | cut -d = -f 2)
+    echod "CheckSettings:FULLHDFOLDER" "TMPCONF=\"$TMPCONF\""
+    if [ ! -d "$TMPCONF" ] ; then
+      # Try to create dir:
+      mkdir -p "$TMPCONF"
+    fi
+    if [ -d "$TMPCONF" ] ; then
+      # Directory exists
+      # Could we write into it?
+      TMPFILE=$(mktemp "$TMPCONF"/test.XXXXXXXXX)
+      if [ -e "$TMPFILE" ] ; then
+        rm "$TMPFILE"
+        FULLHDFOLDER="$TMPCONF"
+        # all ok, next settings
+      else
+        # directory exists but not useable:
+        echow "CheckSettings:FULLHDFOLDER" "Can't use configured Full HD folder. Try to use default one."
+        CheckFullHDFolder
+      fi
+    else
+      # Directory from settings file did not exists.
+      # Try to use default directory:
+      CheckFullHDFolder
+    fi
+  else
+    # The option is not configured.
+    # I should create the directory if it does not exists.
+    if [ ! -d "$FULLHDFOLDER" ] ; then
+      # Try to create dir:
+      mkdir -p "$FULLHDFOLDER"
+    fi
+    if [ -d "$FULLHDFOLDER" ] ; then
+      # Directory exists
+      # Could we write into it?
+      TMPFILE=$(mktemp "$FULLHDFOLDER"/test.XXXXXXXXX)
+      if [ -e "$TMPFILE" ] ; then
+        rm "$TMPFILE"
+        # all ok, next settings
+      else
+        # directory exists but not useable:
+        echoe "CheckSettings:FULLHDFOLDER" "Can't use default FULL HD folder. Exit."
         exit
       fi
     fi
@@ -486,6 +540,29 @@ function CheckThumbnailFolder()
 }
 
 # #########################################
+# CheckFullHDFolder
+#
+function CheckFullHDFolder()
+{
+  if [ -d "$FULLHDFOLDER" ] ; then
+    # Directory exists
+    # Could we write into it?
+    TMPFILE=$(mktemp "$FULLHDFOLDER"/test.XXXXXXXXX)
+    if [ -e "$TMPFILE" ] ; then
+      rm "$TMPFILE"
+      # We could use folder.
+      return
+    else
+      echoe "CheckFullHDFolder" "Can't use default Full HD folder. Exit."
+      exit
+    fi
+  else
+    echoe "CheckFullHDFolder" "Default Full HD folder didn't exists. Exit."
+    exit
+  fi
+}
+
+# #########################################
 # CheckExportFolder
 #
 function CheckExportFolder()
@@ -518,6 +595,7 @@ function DebugSettings()
   echod "DebugSettings" "UUIDFILE=$UUIDFILE"
   #echod "DebugSettings" "ALBUMFILE=$ALBUMFILE" # The ALBUMFILE will not be used in this script.
   echod "DebugSettings" "THUMBNAILFOLDER=$THUMBNAILFOLDER"
+  echod "DebugSettings" "FULLHDFOLDER=$FULLHDFOLDER"
   echod "DebugSettings" "EXPORTFOLDER=$EXPORTFOLDER"
   echod "DebugSettings" "SETTINGSFILE=$SETTINGSFILE"
 }
@@ -548,6 +626,9 @@ function showHelp()
     echo "    -e     : Error output on."
     echo "    -q     : Normal output off. Be quiet. Show only warnings and errors."
     echo "    -Q     : Be absolute quit. Show nothing."
+    echo "    -r     : Start in recursive mode (should not be set by user)."
+    echo "   ....    : '....' is folder to scan. Must be the last program parameter."
+    echo ""
     echo "Copyright $PROG_DATE by Karsten Köth"
 }
 
@@ -637,6 +718,7 @@ if [ "$RECURSIVE" = "0" ] ; then
   export IMAGEVIEWERDATABASEFILE="$DATABASEFILE"
   export IMAGEVIEWERUUIDFILE="$UUIDFILE"
   export IMAGEVIEWERTHUMBNAILFOLDER="$THUMBNAILFOLDER"
+  export IMAGEVIEWERFULLHDFOLDER="$FULLHDFOLDER"
   export IMAGEVIEWEREXPORTFOLDER="$EXPORTFOLDER"
   export IMAGEVIEWERECHODEBUG="$ECHODEBUG"
   export IMAGEVIEWERECHOVERBOSE="$ECHOVERBOSE"
@@ -648,6 +730,7 @@ else
   DATABASEFILE="$IMAGEVIEWERDATABASEFILE"
   UUIDFILE="$IMAGEVIEWERUUIDFILE"
   THUMBNAILFOLDER="$IMAGEVIEWERTHUMBNAILFOLDER"
+  FULLHDFOLDER="$IMAGEVIEWERFULLHDFOLDER"
   EXPORTFOLDER="$IMAGEVIEWEREXPORTFOLDER"
   ECHODEBUG="$IMAGEVIEWERECHODEBUG"
   ECHOVERBOSE="$IMAGEVIEWERECHOVERBOSE"
@@ -725,7 +808,7 @@ do
           export IMAGEVIEWERTMPFILE=$(mktemp .$PROG_NAME.Return.XXXXXXXXX)
           # Run exif2html.sh "$FULLPATH" #>> "$DATABASEFILE"
           exif2html.sh "$datei"
-          # Get ariables from exif2html.sh:
+          # Get variables from exif2html.sh:
           source "$IMAGEVIEWERTMPFILE"
           # Delete tmp file:
           rm "$IMAGEVIEWERTMPFILE"
@@ -757,6 +840,7 @@ do
                 echo "$IMAGEVIEWERUUID;$FULLFILENAME" >> "$UUIDFILE"
                 # Ich will nur pngs als Thumb haben!
                 convert "$datei" -resize 320x320 "$THUMBNAILFOLDER"/"$IMAGEVIEWERTHUMB".png
+                convert "$datei" -resize 1920x1080 "$FULLHDFOLDER"/"$IMAGEVIEWERTHUMB".jpeg # TODO: Only resize if greater
               fi
             fi
           fi
