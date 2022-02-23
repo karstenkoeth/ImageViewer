@@ -22,12 +22,14 @@
 #                     license text.
 # 2021-03-26 0.16 kdk Bug fixing
 # 2022-02-13 0.17 kdk showHelp() enhanced with '-r', FULLHDFOLDER support added
+# 2022-02-22 0.18 kdk fileSize() added
+# 2022-02-23 0.19 kdk FullHD: Only resize if greater. FileSize() tested
 
 # #########################################
 #
 # MIT license (MIT)
 #
-# Copyright 2021 - 2018 Karsten Köth
+# Copyright 2022 - 2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -85,7 +87,8 @@
 #
 # UUID stellt Beziehung zwischen Thumb und Speicherplatz des Originalbildes her.
 # Bilder nicht mehrfach scannen:
-# Ist Bildname mit Speicherplatz und gleicher WIDTH + HEIGHT + DATE + CAMERA     <== Vier wichtige Eigenschaften eines Bildes!
+# Ist Bildname mit Speicherplatz und gleicher 
+#     WIDTH + HEIGHT + DATE + CAMERA + FILESIZE    <== Fünf wichtige Eigenschaften eines Bildes!
 # schon in Datenbank?
 #
 # Datenbanken:
@@ -93,10 +96,14 @@
 # DATABASEFILE
 # Enthält alle Infos über die Originaldatei bis auf die UUID. Dadurch kann in
 # der Datenbank einfach gesucht werden, ob Datei schon aufgenommen wurde.
-# echo "$FULLFILENAME;$IMAGEVIEWERFILENAME;$IMAGEVIEWERDATETIME;$IMAGEVIEWERWIDTH;$IMAGEVIEWERHEIGHT;$IMAGEVIEWERCAMERA;" >> "$DATABASEFILE"
+# echo "$FULLFILENAME;$IMAGEVIEWERFILENAME;$IMAGEVIEWERDATETIME;$IMAGEVIEWERWIDTH;$IMAGEVIEWERHEIGHT;$IMAGEVIEWERCAMERA;$IMAGEVIEWERSIZE" >> "$DATABASEFILE"
 #
 # THUMBNAILFOLDER
 # Enthält alle Thumbnails. Diese enthalten: $DATETIME.$UUID.$WIDTH"x"$HEIGHT.$CAMERA.THUMB.$FILENAME
+#
+# FULLHDFOLDER
+# Enthält alle Bilder in FullHD Auflösung oder kleiner, falls keine FullHD 
+# Auflösung existiert. Der Dateiname ist gleich dem der Thumbnails.
 #
 # UUIDFILE
 # Enthält Verknüpfung zwischen UUID und FULLFILENAME
@@ -163,8 +170,8 @@
 #
 
 PROG_NAME="html_collect_pictures"
-PROG_VERSION="0.17"
-PROG_DATE="2022-02-13"
+PROG_VERSION="0.19"
+PROG_DATE="2022-02-23"
 PROG_CLASS="ImageViewer"
 PROG_SCRIPTNAME="html_collect_pictures.sh"
 
@@ -185,6 +192,28 @@ RECURSIVE="0"
 #
 
 source image_viewer_common_func.bash
+
+# #########################################
+# fileSize()
+# Parameter
+#   1: file name
+# Return
+#   File size in Bytes
+# Function first used inside AssetHub Usage Scripts (MIT License)
+# Tested at:
+# "17.7.0" = MAC OS X High Sierra 10.13.6
+# SUSE Linux Enterprise Server 15 SP1
+# Copied from bashutils - bashutils_common_functions.bash - Version 0.26
+function fileSize()
+{
+    if [ -f "$1" ] ; then
+        # Get file size
+        # tSize=$(wc -c "$1" | cut -d " " -f 1 -) # Too unsecure, sometimes more " " before the first value.
+        # tSize=$(ls -l "$1" | cut -d " " -f 5 -)  # Too unsecure, sometimes more " " between values.
+        tSize=$(wc -c "$1" | awk '{print $1}')
+        echo $tSize
+    fi
+}
 
 # #########################################
 # CheckSettings
@@ -788,9 +817,12 @@ do
       if [ ! -r "$datei" ] || [ ! -s "$datei" ] ; then
         echow "Main:File" "File $datei not readable or has size zero. Skip."
       else
-        # Get mime type...
+        # Get mime type ...
         MIMETYPE=$(file --mime-type --separator ";" "$datei" | cut -d ";" -f 2 )
         echod "Main:MimeType" ">$MIMETYPE<"
+        # Get file size ...
+        IMAGEVIEWERSIZE=$(fileSize "$datei")
+        echod "Main:FileSize" "$IMAGEVIEWERSIZE Bytes"
 
         # #########################################
         # Is Picture?
@@ -829,7 +861,7 @@ do
               # #########################################
               # Example:
               # TODO: ... $IMAGEVIEWERLOCATION could be inserted additionally
-              TMPSTRING="$FULLFILENAME;$IMAGEVIEWERFILENAME;$IMAGEVIEWERDATETIME;$IMAGEVIEWERWIDTH;$IMAGEVIEWERHEIGHT;$IMAGEVIEWERCAMERA;"
+              TMPSTRING="$FULLFILENAME;$IMAGEVIEWERFILENAME;$IMAGEVIEWERDATETIME;$IMAGEVIEWERWIDTH;$IMAGEVIEWERHEIGHT;$IMAGEVIEWERCAMERA;$IMAGEVIEWERSIZE;"
               # do we have scanned the picture in a previous scan?
               TMPRESULT=$(grep "$TMPSTRING" "$DATABASEFILE")
               if [ "$TMPRESULT" = "$TMPSTRING" ] ; then
@@ -840,7 +872,16 @@ do
                 echo "$IMAGEVIEWERUUID;$FULLFILENAME" >> "$UUIDFILE"
                 # Ich will nur pngs als Thumb haben!
                 convert "$datei" -resize 320x320 "$THUMBNAILFOLDER"/"$IMAGEVIEWERTHUMB".png
-                convert "$datei" -resize 1920x1080 "$FULLHDFOLDER"/"$IMAGEVIEWERTHUMB".jpeg # TODO: Only resize if greater
+                if [ "$IMAGEVIEWERWIDTH" -gt "1920" ] || [ "$IMAGEVIEWERHEIGHT" -gt "1080" ] ; then
+                  convert "$datei" -resize 1920x1080 "$FULLHDFOLDER"/"$IMAGEVIEWERTHUMB".jpeg 
+                else
+                  # Copy complete file as file for FullHD Presentations. We only want to have jpegs:
+                  if [ "$MIMETYPE" = " image/jpeg" ] ; then
+                    cp "$datei" "$FULLHDFOLDER"/"$IMAGEVIEWERTHUMB".jpeg
+                  else
+                    convert "$datei" "$FULLHDFOLDER"/"$IMAGEVIEWERTHUMB".jpeg
+                  fi
+                fi
               fi
             fi
           fi

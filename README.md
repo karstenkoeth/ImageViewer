@@ -6,6 +6,7 @@ Images will be collected from all places on the filesystem and displayed in the 
 
 `html_collect_pictures.sh` scans the filesystem. The main routine is located in
 *main* and starts after comment *Is Picture*.
+
 Line 751: Check for doubles: But here we check only, if we have exactly that file in that location in the database.
 If the file is doubled in another source folder, we will not find it.
 
@@ -72,6 +73,19 @@ This folder is located below the Website (or on an extra mass storage).
 ### Export Folder
 
 `$HOME/tmp/ImageViewer/Export`
+
+## Process
+
+Different sources delivers images.
+
+The collect script collects all information about all images from all sources in one database.
+The images itself stays at the original places.
+Therefore, the source folders itself should be long term available (e.g. no USB drives)
+and included into a backup strategy.
+
+The ImageViewer shows all images and give the possibility to export a collection.
+
+Export is done via the export folder.
 
 ## Tests
 
