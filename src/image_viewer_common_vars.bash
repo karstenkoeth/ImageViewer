@@ -19,12 +19,13 @@
 # 2020-11-16 0.11 kdk With ExportBashScript
 # 2021-03-26 0.12 kdk With more comments
 # 2022-02-13 0.13 kdk With FULLHDFOLDER support
+# 2022-02-23 0.14 kdk With LogFile support
 
 # #########################################
 #
 # MIT license (MIT)
 #
-# Copyright 2021 - 2018 Karsten Köth
+# Copyright 2022 - 2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +55,7 @@ ECHOVERBOSE="0"
 ECHONORMAL="1"
 ECHOWARNING="1"
 ECHOERROR="1"
+ECHOLOG="1"
 
 # #########################################
 #
@@ -69,6 +71,7 @@ UUIDFILE="$DATABASEFOLDER/filenames.csv"
 ALBUMFILE="$DATABASEFOLDER/albumnames.csv"
 ALBUMPREFIX="$DATABASEFOLDER/album_"
 ALBUMPOSTFIX=".csv"
+LOGFILE="$DATABASEFOLDER/log.txt"
 #THUMBNAILFOLDER="$DATABASEFOLDER/Thumbnails"
 THUMBNAILFOLDER="$HOME/Sites/ImageViewer/Thumbnails"
 #FULLHDFOLDER="$HOME/Sites/ImageViewer/FullHD"

@@ -13,12 +13,13 @@
 #
 # 2018-04-06 0.01 kdk First version
 # 2018-05-21 0.10 kdk With license text.
+# 2022-02-23 0.11 kdk With echol()
 
 # #########################################
 #
 # MIT license (MIT)
 #
-# Copyright 2018 Karsten Köth
+# Copyright 2022 - 2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -105,5 +106,19 @@ function echoe()
 {
   if [ "$ECHOERROR" = "1" ] ; then
     echo "[$PROG_NAME:$1] $2"
+  fi
+}
+
+# #########################################
+# echol
+# Log messages into file.
+# Parameters:
+# $1 : Function calling
+# $2 : Content
+function echol()
+{
+  if [ "$ECHOLOG" = "1" ] ; then
+    local actDateTime=$(date "+%Y-%m-%d.%H_%M_%S")
+    echo "$actDateTime [$PROG_NAME:$1] $2" >> "$LOGFILE"
   fi
 }

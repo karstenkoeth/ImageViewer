@@ -24,6 +24,7 @@
 # 2022-02-13 0.17 kdk showHelp() enhanced with '-r', FULLHDFOLDER support added
 # 2022-02-22 0.18 kdk fileSize() added
 # 2022-02-23 0.19 kdk FullHD: Only resize if greater. FileSize() tested
+# 2022-02-23 0.20 kdk after ShellCheck
 
 # #########################################
 #
@@ -129,6 +130,9 @@
 # L;Lukas
 # K;Karsten
 #
+# LOGFILE
+# Contains some logs in unstructured file format.
+#
 # Collection of Album Files
 # Every Album file contains the UUIDs of the images inserted into this album.
 # One UUID per line.
@@ -181,6 +185,7 @@ PROG_SCRIPTNAME="html_collect_pictures.sh"
 #
 # Will be read once on start of the program:
 
+# shellcheck source=image_viewer_common_vars.bash
 source image_viewer_common_vars.bash
 
 
@@ -191,6 +196,7 @@ RECURSIVE="0"
 # Functions
 #
 
+# shellcheck source=image_viewer_common_func.bash
 source image_viewer_common_func.bash
 
 # #########################################
@@ -211,7 +217,7 @@ function fileSize()
         # tSize=$(wc -c "$1" | cut -d " " -f 1 -) # Too unsecure, sometimes more " " before the first value.
         # tSize=$(ls -l "$1" | cut -d " " -f 5 -)  # Too unsecure, sometimes more " " between values.
         tSize=$(wc -c "$1" | awk '{print $1}')
-        echo $tSize
+        echo "$tSize"
     fi
 }
 
@@ -632,10 +638,10 @@ function DebugSettings()
 # #########################################
 # DebugProgParams
 # Show all Settings.
-function DebugProgParams()
-{
-  echo "[$PROG_NAME:DebugProgParams] verzeichnis=$verzeichnis"
-}
+#function DebugProgParams()
+# {
+#  echo "[$PROG_NAME:DebugProgParams] verzeichnis=$verzeichnis"
+# }
 
 # #########################################
 # showHelp()
@@ -809,7 +815,8 @@ do
         # Start first recursion:
         IFS=$OLDIFS
         echod "Main:Start first recursion" "."
-        $0 -r `pwd`/*
+        #$0 -r `pwd`/*    # Version 0.19 and prior, tested
+        $0 -r "$(pwd)"/*  # Changed by Version 0.19 --> 0.20, untested
       fi
     else
       # Normal file.
@@ -837,7 +844,8 @@ do
           export IMAGEVIEWERTHUMB=""
           export IMAGEVIEWERFILENAME="$PART"
           # Create file to get variables from exif2html.sh:
-          export IMAGEVIEWERTMPFILE=$(mktemp .$PROG_NAME.Return.XXXXXXXXX)
+          IMAGEVIEWERTMPFILE=$(mktemp .$PROG_NAME.Return.XXXXXXXXX)
+          export IMAGEVIEWERTMPFILE
           # Run exif2html.sh "$FULLPATH" #>> "$DATABASEFILE"
           exif2html.sh "$datei"
           # Get variables from exif2html.sh:
@@ -892,6 +900,7 @@ do
         then
           MIMEKNOWN="1"
           echod "Main:MimeType" "Is PDF."
+          echol "Main:MimeType" "File '$datei' is PDF. Unsupported"
           # TODO: Aus PDF Daten auslesen:
           # pdfinfo -isodates "$datei"
           # CreationDate:   2012-05-03T10:29:02+02
@@ -906,6 +915,10 @@ do
 
         # TODO andere File types in excluded log datei vermerken mit vollen Pfad.
         # Run exif2html.sh "$FULLPATH" >> "$DATABASEFILE"
+        if [ "$MIMEKNOWN" != "1" ] ; then
+          echod "Main:MimeType" "Mime Type '$MIMETYPE' unknown"
+          echol "Main:MimeType" "Mime Type '$MIMETYPE' unknown in '$datei'"
+        fi
 
         # One line per file found.
         #IFS=$OLDIFS
