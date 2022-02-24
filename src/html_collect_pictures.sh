@@ -25,6 +25,7 @@
 # 2022-02-22 0.18 kdk fileSize() added
 # 2022-02-23 0.19 kdk FullHD: Only resize if greater. FileSize() tested
 # 2022-02-23 0.20 kdk after ShellCheck
+# 2022-02-24 0.21 kdk Comments deleted and other added, support for image_viewer_find_doubles.sh added - not yet tested
 
 # #########################################
 #
@@ -98,6 +99,14 @@
 # Enthält alle Infos über die Originaldatei bis auf die UUID. Dadurch kann in
 # der Datenbank einfach gesucht werden, ob Datei schon aufgenommen wurde.
 # echo "$FULLFILENAME;$IMAGEVIEWERFILENAME;$IMAGEVIEWERDATETIME;$IMAGEVIEWERWIDTH;$IMAGEVIEWERHEIGHT;$IMAGEVIEWERCAMERA;$IMAGEVIEWERSIZE" >> "$DATABASEFILE"
+# Get one field with 'cut', e.g. :>  echo $DATABASEFILE | cut -d ";" -f 1 --> Get $FULLFILENAME
+#  1  $FULLFILENAME
+#  2  $IMAGEVIEWERFILENAME
+#  3  $IMAGEVIEWERDATETIME
+#  4  $IMAGEVIEWERWIDTH
+#  5  $IMAGEVIEWERHEIGHT
+#  6  $IMAGEVIEWERCAMERA
+#  7  $IMAGEVIEWERSIZE
 #
 # THUMBNAILFOLDER
 # Enthält alle Thumbnails. Diese enthalten: $DATETIME.$UUID.$WIDTH"x"$HEIGHT.$CAMERA.THUMB.$FILENAME
@@ -132,6 +141,13 @@
 #
 # LOGFILE
 # Contains some logs in unstructured file format.
+#
+# FILEPOINTERFILE
+# Contains line number in DATABASEFILE with first new line.
+# Normally, one run of html_collect_pictures.sh should be followed by one run of
+# image_viewer_find_doubles.sh. But maybe, the run order will not be noticed.
+# Therefore the collect script add the line number to this file.
+# If the find script was successfully finished, this file will be deleted.
 #
 # Collection of Album Files
 # Every Album file contains the UUIDs of the images inserted into this album.
@@ -174,8 +190,8 @@
 #
 
 PROG_NAME="html_collect_pictures"
-PROG_VERSION="0.19"
-PROG_DATE="2022-02-23"
+PROG_VERSION="0.21"
+PROG_DATE="2022-02-24"
 PROG_CLASS="ImageViewer"
 PROG_SCRIPTNAME="html_collect_pictures.sh"
 
@@ -185,7 +201,6 @@ PROG_SCRIPTNAME="html_collect_pictures.sh"
 #
 # Will be read once on start of the program:
 
-# shellcheck source=image_viewer_common_vars.bash
 source image_viewer_common_vars.bash
 
 
@@ -196,7 +211,6 @@ RECURSIVE="0"
 # Functions
 #
 
-# shellcheck source=image_viewer_common_func.bash
 source image_viewer_common_func.bash
 
 # #########################################
@@ -746,6 +760,11 @@ if [ "$RECURSIVE" = "0" ] ; then
     # The file did not exists, but the standard tests should be done:
     CheckSettings "-#FileNotReallyThere."
   fi
+
+  # Remember the first new line we will write into the database.
+  # This helps image_viewer_find_doubles to not scan all files again.
+  FirstNewLine=$(cat "$DATABASEFILE" | wc -l | sed 's/^[ ]* \(.*\)/\1/') # sed removes the trailing spaces
+  echo "$FirstNewLine" >> "$FILEPOINTERFILE"
 
   echod "Main:RECURSIVE" "Prepare for recursive execution ..."
   # Set settings for recursive execution:

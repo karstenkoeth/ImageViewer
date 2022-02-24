@@ -14,6 +14,7 @@
 # 2018-04-06 0.01 kdk First version
 # 2018-05-21 0.10 kdk With license text.
 # 2022-02-23 0.11 kdk With echol()
+# 2022-02-24 0.12 kdk With delFile()
 
 # #########################################
 #
@@ -121,4 +122,17 @@ function echol()
     local actDateTime=$(date "+%Y-%m-%d.%H_%M_%S")
     echo "$actDateTime [$PROG_NAME:$1] $2" >> "$LOGFILE"
   fi
+}
+
+# #########################################
+# delFile()
+# Parameter
+#   1: File name
+# Deletes a file, if it exists.
+# Code copied from bashutils - bashutils_common_functions.bash Version 0.27
+function delFile()
+{
+    if [ -f "$1" ] ; then
+        rm "$1"
+    fi
 }

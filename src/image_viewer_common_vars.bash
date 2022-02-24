@@ -20,6 +20,7 @@
 # 2021-03-26 0.12 kdk With more comments
 # 2022-02-13 0.13 kdk With FULLHDFOLDER support
 # 2022-02-23 0.14 kdk With LogFile support
+# 2022-02-24 0.15 kdk With FilePointer for image_viewer_find_doubles.sh support
 
 # #########################################
 #
@@ -72,6 +73,7 @@ ALBUMFILE="$DATABASEFOLDER/albumnames.csv"
 ALBUMPREFIX="$DATABASEFOLDER/album_"
 ALBUMPOSTFIX=".csv"
 LOGFILE="$DATABASEFOLDER/log.txt"
+FILEPOINTERFILE="$DATABASEFOLDER/filepointer.txt"
 #THUMBNAILFOLDER="$DATABASEFOLDER/Thumbnails"
 THUMBNAILFOLDER="$HOME/Sites/ImageViewer/Thumbnails"
 #FULLHDFOLDER="$HOME/Sites/ImageViewer/FullHD"
