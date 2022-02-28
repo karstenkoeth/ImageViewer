@@ -15,10 +15,11 @@
 # 2021-01-29 0.03 kdk 2021 year ready, with PROG_DATE and Copyright in help, with showVersion()
 # 2021-02-08 0.04 kdk License text enhanced.
 # 2022-02-24 0.05 kdk First version of ImageViewer Find Doubles - not yet tested
+# 2022-02-28 0.06 kdk Adaptet to test results - tested but not finished!
 
 PROG_NAME="ImageViewer Find Doubles"
-PROG_VERSION="0.05"
-PROG_DATE="2022-02-24"
+PROG_VERSION="0.06"
+PROG_DATE="2022-02-28"
 PROG_CLASS="ImageViewer"
 PROG_SCRIPTNAME="image_viewer_find_doubles.sh"
 
@@ -96,10 +97,13 @@ source image_viewer_common_func.bash
 function getFirstNewLine()
 {
     if [ -f "$FILEPOINTERFILE" ] ; then
-        head -n 1 "$FILEPOINTERFILE"
+        local lineNr=$(head -n 1 "$FILEPOINTERFILE")
+        # Now 'lineNr' contains the line number before doing the scan. Therefore increment:
+        lineNr=$((lineNr+1))
+        echo "$lineNr"
     else
         # No file found. Therefore start from beginning:
-        echo 0
+        echo 1
     fi
 }
 
@@ -137,6 +141,9 @@ function showVersion()
 
 echon "Main" "Starting ..."
 
+ECHODEBUG="1"
+ECHOVERBOSE="1"
+
 # Check for program parameters:
 if [ $# -eq 1 ] ; then
     if   [ "$1" = "-V" ] ; then
@@ -160,12 +167,26 @@ fi
 #
 
 StartingLine=$(getFirstNewLine)
+EndingLine=$(cat "$DATABASEFILE" | wc -l | sed 's/^[ ]* \(.*\)/\1/') # sed removes the trailing spaces
+actLineNr=$StartingLine
+
+echod "Main:Lines" "Starting Line: '$StartingLine'"
+echod "Main:Lines" "Ending   Line: '$EndingLine'"
 
 #
-#for
-# jede Zeile in ... startend mit dem ersten neuen Eintrag.
+while [ $EndingLine -ge $actLineNr ] ; do
+    lineContent=$(sed -n "$actLineNr","$actLineNr"p "$DATABASEFILE")
+    # jede Zeile in ... startend mit dem ersten neuen Eintrag.
+    echod "Main:Loop" "Line: '$actLineNr': '$lineContent'"
+
+    # TODO
+    # Check for doubles...
+
+    # Check next Line Number:
+    actLineNr=$((actLineNr+1))
+done
 
 # Clean up:
-delFile "$FILEPOINTERFILE"
+#delFile "$FILEPOINTERFILE"   # Disabled for Debugging! #####################################
 
 echon "Main" "Done."

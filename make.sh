@@ -111,6 +111,7 @@ cp image_viewer_common_func.bash "$SERVER"
 cp image_viewer_startserver.sh "$SERVER"
 cp html_collect_pictures.sh "$SERVER"
 cp exif2html.sh "$SERVER"
+cp image_viewer_find_doubles.sh "$SERVER"
 cp html_updater_server.sh "$SERVER" 
 
 echo "Post install ..."
@@ -120,6 +121,7 @@ chmod u+x "$SERVER/image_viewer_common_func.bash"
 chmod u+x "$SERVER/image_viewer_startserver.sh"
 chmod u+x "$SERVER/html_collect_pictures.sh"
 chmod u+x "$SERVER/exif2html.sh"
+chmod u+x "$SERVER/image_viewer_find_doubles.sh"
 chmod u+x "$SERVER/html_updater_server.sh"
 
 # #########################################
