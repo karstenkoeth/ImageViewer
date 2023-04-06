@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+  <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: black;
+      }
+      img {
+        object-fit: contain;
+        width:100%;
+        height:100%;
+        position: absolute;
+        transition: opacity 2s ease-in-out;
+      }
+      #two{
+        opacity: 0;
+      }
+  </style>
+</head>
+<body>
+    <div>
+        <img id=one src='https://images.unsplash.com/photo-1674640523540-7efc490d0381?auto=format&fit=crop&w=1920&q=80'>
+        <img id=two src='https://images.unsplash.com/photo-1642165464674-bfd446e0e1a9?auto=format&fit=crop&w=1920&q=80'>
+    </div>
+    <script>
+      time = 60*1000;
+
+      one = document.getElementById("one");
+      two = document.getElementById("two");
+
+      function load_one(){
+        console.log('one');
+        one.src = 'https://images.unsplash.com/photo-1674640523540-7efc490d0381?auto=format&fit=crop&w=1920&q=80';
+        one.style.opacity = 1;
+        two.style.opacity = 0;
+        setTimeout(load_two,time)
+      }
+
+      function load_two(){
+        console.log('two');
+        two.style.opacity = 1;
+        one.style.opacity = 0;
+        two.src = 'https://images.unsplash.com/photo-1642165464674-bfd446e0e1a9?auto=format&fit=crop&w=1920&q=80';
+        setTimeout(load_one,time)
+      }
+
+      //one.onload = function (){ two.style.opacity = 0.5; }
+      //two.onload = function (){ two.style.opacity = 1; }
+
+      setTimeout(load_two,time)
+
+      document.querySelector("body").ondblclick = function () { 
+        if (!(document.fullscreenElement || 
+              document.mozFullScreenElement || 
+              document.msFullscreenElement || 
+              document.webkitFullscreenElement)) { 
+          if (this.requestFullscreen) { 
+                this.requestFullscreen() 
+                console.log('Normal Full Screen')
+                one.style.left="0px";
+                one.style.top="0px";
+                two.style.left="0px";
+                two.style.top="0px";
+          } else { 
+            if (this.mozRequestFullScreen) { 
+                this.mozRequestFullScreen() 
+                console.log('Mozilla Full Screen')
+                one.style.left="0px";
+                one.style.top="0px";
+                two.style.left="0px";
+                two.style.top="0px";
+            } else { 
+              if (this.webkitRequestFullscreen) { 
+                this.webkitRequestFullscreen()
+                console.log('WebKit Full Screen') 
+                one.style.left="0px";
+                one.style.top="0px";
+                two.style.left="0px";
+                two.style.top="0px";
+              } else { 
+                if (this.msRequestFullscreen) { 
+                  this.msRequestFullscreen() 
+                  console.log('Microsoft Full Screen')
+                  one.style.left="0px";
+                  one.style.top="0px";
+                  two.style.left="0px";
+                  two.style.top="0px";
+                } 
+              } 
+            } 
+          } 
+        } else { 
+          if (document.exitFullscreen) { 
+            document.exitFullscreen() 
+          } else { 
+            if (document.mozCancelFullScreen) { 
+              document.mozCancelFullScreen() 
+            } else {
+              if (document.webkitExitFullscreen) { 
+                document.webkitExitFullscreen() 
+              } else { 
+                if (document.msExitFullscreen) { 
+                  document.msExitFullscreen() 
+                } 
+              } 
+            } 
+          } 
+        } 
+      }
+    </script>
+</body>
+</html>
