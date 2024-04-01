@@ -10,11 +10,12 @@
 # 2018-02-25 0.05 kdk export variables
 # 2018-03-04 0.06 kdk With speed enhancements
 # 2018-05-21 0.10 kdk With license text.
+# 2024-04-01 0.11 kdk With FullHD
 
 PROG_NAME="exif2html"
 PROG_CLASS="htmlutils"
-PROG_VERSION="0.10"
-PROG_DATUM="21. Mai 2018"
+PROG_VERSION="0.11"
+PROG_DATE="2024-04-01"
 
 # #######################################################
 # Overview:
@@ -35,7 +36,7 @@ PROG_DATUM="21. Mai 2018"
 #
 # MIT license (MIT)
 #
-# Copyright 2018 Karsten Köth
+# Copyright 2024 - 2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -75,7 +76,7 @@ XS_DEBUG="Debug"
 # ###########################################
 # Funktionen
 
-function hilfe
+function hilfe()
 {
   echo "Syntax: $PROG_NAME [OPTIONS] input_file"
   echo "Options: "
@@ -88,11 +89,11 @@ function hilfe
   echo "Return Values: "
   echo "         0  No error occured."
   echo "         1  An error occured."
-  echo "Copyright $PROG_DATUM by Karsten Köth"
+  echo "Copyright $PROG_DATE by Karsten Köth"
   return
 }
 
-function version
+function version()
 {
   echo "$PROG_NAME ($PROG_CLASS) $PROG_VERSION"
   return
@@ -122,22 +123,22 @@ if [ $VERBOSE = 1 ] ; then
 fi
 
 # Read from jpg-File date of shot:
-EXIFDATA=`exiftool -s -d "%Y-%m-%d.%H_%M_%S" "$JPGFILE"`
+EXIFDATA=$(exiftool -s -d "%Y-%m-%d.%H_%M_%S" "$JPGFILE")
 
 if [ $DEBUG = 1 ] ; then
   echo "[$PROG_NAME:$XS_DEBUG:AllData] '$EXIFDATA'"
 fi
 
 # Take only Field with date and jump over first space:
-EXIFDATE=`echo "$EXIFDATA" | grep ^DateTimeOrig | cut -d ":" -f 2 | cut -c 2- -`
-FILEDATE=`echo "$EXIFDATA" | grep ^FileModifyDate | cut -d ":" -f 2 | cut -c 2- -`
+EXIFDATE=$(echo "$EXIFDATA" | grep ^DateTimeOrig | cut -d ":" -f 2 | cut -c 2- -)
+FILEDATE=$(echo "$EXIFDATA" | grep ^FileModifyDate | cut -d ":" -f 2 | cut -c 2- -)
 if [ $VERBOSE = 1 ] && [ "$EXIFDATE" != "" ]
 then
     echo "[$PROG_NAME:$XS_STATE:Output] File '$JPGFILE' was made at $EXIFDATE."
 fi
 
 # Picture taken with wich camera?
-CAMERA=`echo "$EXIFDATA" | grep ^Model | cut -d ":" -f 2 | cut -c 2- - | sed -e 's/ /-/g'`
+CAMERA=$(echo "$EXIFDATA" | grep ^Model | cut -d ":" -f 2 | cut -c 2- - | sed -e 's/ /-/g')
 # If only a picture without camera name:
 if [ -z "$CAMERA" ] ; then
     CAMERA="File"
@@ -176,7 +177,7 @@ fi
 
 NEWFILENAME="$DATETIME.$WIDTH"x"$HEIGHT.$CAMERA.$IMAGEVIEWERFILENAME"
 THUMBNAME="$DATETIME.$UUID.$WIDTH"x"$HEIGHT.$CAMERA.THUMB.$IMAGEVIEWERFILENAME"
-
+FULLHDNAME="$DATETIME.$UUID.$WIDTH"x"$HEIGHT.$CAMERA.FullHD.$IMAGEVIEWERFILENAME"
 
 # TODO Create html line with link to thumbnail...
 
@@ -190,6 +191,7 @@ if [ -w "$IMAGEVIEWERTMPFILE" ] ; then
   echo "IMAGEVIEWERWIDTH=$WIDTH" > "$IMAGEVIEWERTMPFILE"
   echo "IMAGEVIEWERHEIGHT=$HEIGHT" >> "$IMAGEVIEWERTMPFILE"
   echo "IMAGEVIEWERTHUMB=\"$THUMBNAME\"" >> "$IMAGEVIEWERTMPFILE"
+  echo "IMAGEVIEWERFULLHD=\"$FULLHDNAME\"" >> "$IMAGEVIEWERTMPFILE"
   echo "IMAGEVIEWERCAMERA=\"$CAMERA\"" >> "$IMAGEVIEWERTMPFILE"
   echo "IMAGEVIEWERUUID=\"$UUID\"" >> "$IMAGEVIEWERTMPFILE"
   echo "IMAGEVIEWERDATETIME=\"$DATETIME\"" >> "$IMAGEVIEWERTMPFILE"

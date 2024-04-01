@@ -26,12 +26,19 @@
 # 2022-02-23 0.19 kdk FullHD: Only resize if greater. FileSize() tested
 # 2022-02-23 0.20 kdk after ShellCheck
 # 2022-02-24 0.21 kdk Comments deleted and other added, support for image_viewer_find_doubles.sh added - not yet tested
+# 2024-04-01 0.22 kdk Support alternative settings
+
+PROG_NAME="html_collect_pictures"
+PROG_VERSION="0.22"
+PROG_DATE="2024-04-01"
+PROG_CLASS="ImageViewer"
+PROG_SCRIPTNAME="html_collect_pictures.sh"
 
 # #########################################
 #
 # MIT license (MIT)
 #
-# Copyright 2022 - 2018 Karsten Köth
+# Copyright 2024 - 2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -110,10 +117,12 @@
 #
 # THUMBNAILFOLDER
 # Enthält alle Thumbnails. Diese enthalten: $DATETIME.$UUID.$WIDTH"x"$HEIGHT.$CAMERA.THUMB.$FILENAME
+# Thumbnails sind immer im PNG-Format.
 #
 # FULLHDFOLDER
 # Enthält alle Bilder in FullHD Auflösung oder kleiner, falls keine FullHD 
 # Auflösung existiert. Der Dateiname ist gleich dem der Thumbnails.
+# FullHD Bilder sind immer im JPEG-Format.
 #
 # UUIDFILE
 # Enthält Verknüpfung zwischen UUID und FULLFILENAME
@@ -189,11 +198,6 @@
 # Constants
 #
 
-PROG_NAME="html_collect_pictures"
-PROG_VERSION="0.21"
-PROG_DATE="2022-02-24"
-PROG_CLASS="ImageViewer"
-PROG_SCRIPTNAME="html_collect_pictures.sh"
 
 # #########################################
 #
@@ -270,7 +274,14 @@ function CheckSettings()
       if [ -e "$TMPFILE" ] ; then
         rm "$TMPFILE"
         DATABASEFOLDER="$TMPCONF"
-        # all ok, next settings
+        # all ok, adapt filenames:
+        DATABASEFILE="$DATABASEFOLDER/pictures.csv"
+        UUIDFILE="$DATABASEFOLDER/filenames.csv"
+        ALBUMFILE="$DATABASEFOLDER/albumnames.csv"
+        ALBUMPREFIX="$DATABASEFOLDER/album_"
+        ALBUMPOSTFIX=".csv"
+        LOGFILE="$DATABASEFOLDER/log.txt"
+        FILEPOINTERFILE="$DATABASEFOLDER/filepointer.txt"
       else
         # directory exists but not useable:
         echow "CheckSettings:DATABASEFOLDER" "Can't use configured database folder. Try to use default one."
@@ -433,7 +444,8 @@ function CheckSettings()
       if [ -e "$TMPFILE" ] ; then
         rm "$TMPFILE"
         EXPORTFOLDER="$TMPCONF"
-        # all ok, next settings
+        # all ok, adjust settings:
+        EXPORTBASHSCRIPT="$EXPORTFOLDER/image_viewer_export.sh" # Will be created by image_viewer_server.sh
       else
         # directory exists but not useable:
         echow "CheckSettings:EXPORTFOLDER" "Can't use configured export folder. Try to use default one."
@@ -535,6 +547,43 @@ function CheckSettings()
     fi
     if [ ! -w "$UUIDFILE" ] ; then
       echoe "CheckSettings:UUIDFILE" "Can't use default uuid file. Exit."
+      exit
+    fi
+  fi
+
+  if [ -r "$1" ] ; then
+    TMPCONF=$(grep ALBUMFILE "$1")
+  else
+    TMPCONF=""
+  fi
+  if [ -n "$TMPCONF" ] ; then
+    # The option is configured. Get the new content and test it:
+    TMPCONF=$(echo "$TMPCONF" | cut -d = -f 2)
+    echod "CheckSettings:ALBUMFILE" "TMPCONF=\"$TMPCONF\""
+    if [ -n "$TMPCONF" ] ; then
+      if [ ! -e "$TMPCONF" ] ; then
+        echod "CheckSettings:ALBUMFILE:Configured" "Create file..."
+        touch "$TMPCONF"
+      fi
+      if [ -w "$TMPCONF" ] ; then
+        # All ok, use it:
+        ALBUMFILE="$TMPCONF"
+        ALBUMPREFIX="$DATABASEFOLDER/album_"
+        ALBUMPOSTFIX=".csv"
+      else
+        echow "CheckSettings:ALBUMFILE" "Can't write to configured album file. Try to use default one."
+        TMPCONF=""
+      fi
+    fi
+  fi
+  if [ ! -n "$TMPCONF" ] ; then
+    # Default file name.
+    if [ ! -e "$ALBUMFILE" ] ; then
+      echod "CheckSettings:ALBUMFILE:Default" "Create file..."
+      touch "$ALBUMFILE"
+    fi
+    if [ ! -w "$ALBUMFILE" ] ; then
+      echoe "CheckSettings:ALBUMFILE" "Can't use default album file. Exit."
       exit
     fi
   fi
@@ -861,6 +910,7 @@ do
           export IMAGEVIEWERWIDTH="0"
           export IMAGEVIEWERHEIGHT="0"
           export IMAGEVIEWERTHUMB=""
+          export IMAGEVIEWERFULLHD=""
           export IMAGEVIEWERFILENAME="$PART"
           # Create file to get variables from exif2html.sh:
           IMAGEVIEWERTMPFILE=$(mktemp .$PROG_NAME.Return.XXXXXXXXX)
@@ -900,13 +950,13 @@ do
                 # Ich will nur pngs als Thumb haben!
                 convert "$datei" -resize 320x320 "$THUMBNAILFOLDER"/"$IMAGEVIEWERTHUMB".png
                 if [ "$IMAGEVIEWERWIDTH" -gt "1920" ] || [ "$IMAGEVIEWERHEIGHT" -gt "1080" ] ; then
-                  convert "$datei" -resize 1920x1080 "$FULLHDFOLDER"/"$IMAGEVIEWERTHUMB".jpeg 
+                  convert "$datei" -resize 1920x1080 "$FULLHDFOLDER"/"$IMAGEVIEWERFULLHD".jpeg 
                 else
                   # Copy complete file as file for FullHD Presentations. We only want to have jpegs:
                   if [ "$MIMETYPE" = " image/jpeg" ] ; then
-                    cp "$datei" "$FULLHDFOLDER"/"$IMAGEVIEWERTHUMB".jpeg
+                    cp "$datei" "$FULLHDFOLDER"/"$IMAGEVIEWERFULLHD".jpeg
                   else
-                    convert "$datei" "$FULLHDFOLDER"/"$IMAGEVIEWERTHUMB".jpeg
+                    convert "$datei" "$FULLHDFOLDER"/"$IMAGEVIEWERFULLHD".jpeg
                   fi
                 fi
               fi
