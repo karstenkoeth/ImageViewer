@@ -99,15 +99,23 @@ One double image in the database is located at:
 
 ## TODO
 
-Check for doubles also in different spaces.
+### Check for doubles also in different spaces.
+
 Better Code: Check in a function.
 After enhancement: Adapt here in Readme in *Architecture* the documentation.
 Find doubles could run in background with low network load and low cpu load.
 Before: Define main storage location.
 
-How to deal with distributed storage solutions?
+### How to deal with distributed storage solutions?
 
 The main database is located in server "M" on disk "M".
 This server makes fully automatically backups to disk "B"
 Therefore, this server has to sync the database to other computers.
 See picture "Network".
+
+### Prepare for multi site support
+
+- Support configuration file in server code
+- Support PORT as configuration option
+- Support MDNS
+- Support distribute configs, database files and thumbnails
