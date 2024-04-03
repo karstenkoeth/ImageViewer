@@ -25,6 +25,19 @@
 # 2021-02-24 0.19 kdk With showVersion, Usage enhanced, PROG_NAME changed
 # 2021-02-28 0.20 kdk File lookup for export
 # 2021-03-19 0.21 kdk Comments added.
+# 2024-04-03 0.22 kdk CheckSettings()
+
+PROG_NAME="ImageViewer Server"
+PROG_VERSION="0.22"
+PROG_DATE="2024-04-03"
+PROG_CLASS="ImageViewer"
+PROG_SCRIPTNAME="image_viewer_server.sh"
+
+# #########################################
+#
+# TODO
+#
+# Call CheckSettings() in init phase
 
 # #########################################
 #
@@ -46,7 +59,7 @@
 #
 # MIT license (MIT)
 #
-# Copyright 2018 - 2021 by Karsten Köth
+# Copyright 2024 - 2018 by Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -98,12 +111,6 @@
 #
 # Constants
 #
-
-PROG_NAME="ImageViewer Server"
-PROG_VERSION="0.21"
-PROG_DATE="2021-03-19"
-PROG_CLASS="ImageViewer"
-PROG_SCRIPTNAME="image_viewer_server.sh"
 
 
 # #########################################
@@ -596,7 +603,84 @@ function ExportFile()
   # Aber derzeit ohne Umrechnungsfunktion implementiert.
 }
 
- #########################################
+# #########################################
+# CheckSettings
+# Only run function if file is present.
+# Change global settings according ot settings file.
+#
+function CheckSettings()
+{
+  # #####
+  # First check the folders...
+
+  # Only if there is the option in the configuration file: change the global
+  # variable:
+  # First, I have to test if the settings file exists and is readable:
+  if [ -r "$SETTINGSFILE" ] ; then
+    TMPCONF=$(grep DATABASEFOLDER "$SETTINGSFILE")
+  else
+    TMPCONF=""
+  fi
+  if [ -n "$TMPCONF" ] ; then
+    # The option is configured. Get the new content and test it:
+    TMPCONF=$(echo "$TMPCONF" | cut -d = -f 2)
+    if [ ! -d "$TMPCONF" ] ; then
+      # Try to create dir:
+      mkdir -p "$TMPCONF"
+    fi
+    if [ -d "$TMPCONF" ] ; then
+      # Directory exists
+      # Could we write into it?
+      TMPFILE=$(mktemp "$TMPCONF"/test.XXXXXXXXX)
+      if [ -e "$TMPFILE" ] ; then
+        rm "$TMPFILE"
+        DATABASEFOLDER="$TMPCONF"
+        # all ok, adapt filenames:
+        DATABASEFILE="$DATABASEFOLDER/pictures.csv"
+        UUIDFILE="$DATABASEFOLDER/filenames.csv"
+        ALBUMFILE="$DATABASEFOLDER/albumnames.csv"
+        ALBUMPREFIX="$DATABASEFOLDER/album_"
+        ALBUMPOSTFIX=".csv"
+        LOGFILE="$DATABASEFOLDER/log.txt"
+        FILEPOINTERFILE="$DATABASEFOLDER/filepointer.txt"
+      else
+        # directory exists but not useable:
+        CheckDatabaseFolder
+      fi
+    else
+      # Directory from settings file did not exists.
+      # Try to use default directory:
+      CheckDatabaseFolder
+    fi
+  else
+    # The option is not configured.
+    # I should create the directory if it does not exists.
+    if [ ! -d "$DATABASEFOLDER" ] ; then
+      # Try to create dir:
+      mkdir -p "$DATABASEFOLDER"
+    fi
+    if [ -d "$DATABASEFOLDER" ] ; then
+      # Directory exists
+      # Could we write into it?
+      TMPFILE=$(mktemp "$DATABASEFOLDER"/test.XXXXXXXXX)
+      if [ -e "$TMPFILE" ] ; then
+        rm "$TMPFILE"
+        # all ok, next settings
+      else
+        # directory exists but not useable:
+        exit
+      fi
+    fi
+  fi
+
+  # #####
+  # Now, check the special variables ...
+
+  # TODO
+
+}
+
+#########################################
 # showHelp()
 # Parameter
 #    -
