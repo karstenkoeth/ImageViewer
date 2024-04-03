@@ -604,6 +604,29 @@ function ExportFile()
 }
 
 # #########################################
+# CheckDatabaseFolder
+#
+function CheckDatabaseFolder()
+{
+  if [ -d "$DATABASEFOLDER" ] ; then
+    # Directory exists
+    # Could we write into it?
+    TMPFILE=$(mktemp "$DATABASEFOLDER"/test.XXXXXXXXX)
+    if [ -e "$TMPFILE" ] ; then
+      rm "$TMPFILE"
+      # We could use folder.
+      return
+    else
+      # "CheckDatabaseFolder" "Can't use default database folder. Exit."
+      exit
+    fi
+  else
+    # "CheckDatabaseFolder" "Default database folder didn't exists. Exit."
+    exit
+  fi
+}
+
+# #########################################
 # CheckSettings
 # Only run function if file is present.
 # Change global settings according ot settings file.
@@ -670,8 +693,16 @@ function CheckSettings()
         # directory exists but not useable:
         exit
       fi
+    else
+      # directory didn't exist and can't created:
+      exit
     fi
   fi
+  
+  # Make first log entry:
+  actDateTime=$(date "+%Y-%m-%d %H:%M:%S")
+  echo "$PROG_NAME ($PROG_CLASS) $PROG_VERSION - $actDateTime" >> "$LOGFILE"
+  echo "[$PROG_NAME:CheckSettings:STATUS] Data base folder: '$DATABASEFOLDER'" >> "$LOGFILE"
 
   # #####
   # Now, check the special variables ...

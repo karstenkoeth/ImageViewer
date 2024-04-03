@@ -21,12 +21,13 @@
 # 2022-02-13 0.13 kdk With FULLHDFOLDER support
 # 2022-02-23 0.14 kdk With LogFile support
 # 2022-02-24 0.15 kdk With FilePointer for image_viewer_find_doubles.sh support
+# 2024-04-03 0.16 kdk $HOME without default; with $WEBSOCKETPORT
 
 # #########################################
 #
 # MIT license (MIT)
 #
-# Copyright 2022 - 2018 Karsten Köth
+# Copyright 2024 - 2018 Karsten Köth
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +64,8 @@ ECHOLOG="1"
 # Constants
 #
 
-HOME="/Users/koeth"
+#HOME="/Users/koeth"
+# We use the default $HOME from OS settings:
 SETTINGSFILE="$HOME/.imageviewer"
 DATABASEFOLDER="$HOME/Pictures/ImageViewer"
 #DATABASEFOLDER="$HOME/Sites/ImageViewer"
@@ -84,5 +86,7 @@ EXPORTBASHSCRIPT="$EXPORTFOLDER/image_viewer_export.sh" # Will be created by ima
 # In JavaScript hard coded:
 #WEBFOLDER="$DATABASEFOLDER"
 #WEBTHUMBNAIL="$WEBFOLDER/Thumbnails"
+# In websockets.ts hard coded:
+WEBSOCKETPORT="8080"
 
 TEST="Mein Test"
